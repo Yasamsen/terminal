@@ -3,586 +3,1009 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#050505">
+
 <title>YasamGit Manager V3</title>
 
 <style>
-*{box-sizing:border-box}
 
-html,body{
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
     margin:0;
     width:100%;
     height:100%;
     background:#050505;
     color:#ddd;
-    font-family:Consolas,Monaco,"Courier New",monospace
+    font-family:
+        Consolas,
+        Monaco,
+        "Courier New",
+        monospace;
 }
 
-body{overflow:hidden}
+body{
+    overflow:hidden;
+}
 
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:disabled{
+    cursor:not-allowed;
+    opacity:.55;
+}
+
+.hidden{
+    display:none!important;
+}
+
+
+/* =========================
+   LOGIN
+========================= */
 
 #login{
+    width:100%;
     height:100vh;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px
+
+    padding:20px;
 }
 
 .card{
     width:100%;
     max-width:430px;
+
     background:#0b0b0b;
+
     border:1px solid #292929;
+
     border-radius:12px;
-    padding:25px
+
+    padding:25px;
 }
 
 .logo{
     color:#00ff66;
+
     font-size:22px;
+
     font-weight:bold;
-    margin-bottom:7px
+
+    margin-bottom:7px;
 }
 
 .muted{
     color:#777;
+
     font-size:12px;
-    line-height:1.6
+
+    line-height:1.6;
 }
 
 label{
     display:block;
+
     color:#aaa;
+
     font-size:12px;
-    margin:15px 0 7px
+
+    margin:
+        15px
+        0
+        7px;
 }
 
-input,select{
+input,
+select{
     width:100%;
+
     padding:11px;
+
     background:#111;
+
     color:#eee;
+
     border:1px solid #303030;
+
     border-radius:8px;
-    outline:none
+
+    outline:none;
 }
 
-input:focus,select:focus{
-    border-color:#00c853
+input:focus,
+select:focus{
+    border-color:#00c853;
 }
 
 .primary{
     width:100%;
+
     margin-top:8px;
+
     padding:12px;
+
     border:0;
+
     border-radius:8px;
+
     background:#00a844;
+
     color:white;
-    font-weight:bold
+
+    font-weight:bold;
 }
 
-.primary:hover{background:#00c853}
+.primary:hover{
+    background:#00c853;
+}
 
 #error{
     color:#ff5555;
+
     font-size:12px;
-    margin-top:10px
+
+    margin-top:10px;
 }
 
-/* APP */
+
+/* =========================
+   APP
+========================= */
 
 #app{
+    width:100%;
     height:100vh;
+
     display:flex;
-    flex-direction:column
+    flex-direction:column;
 }
 
 .header{
     min-height:58px;
+
     background:#090909;
+
     border-bottom:1px solid #222;
+
     display:flex;
+
     align-items:center;
+
     gap:8px;
-    padding:8px 12px;
-    flex-wrap:wrap
+
+    padding:
+        8px
+        12px;
+
+    flex-wrap:wrap;
 }
 
 .brand{
     color:#00ff66;
+
     font-weight:bold;
-    margin-right:auto
+
+    margin-right:auto;
 }
 
 .repo-select{
     width:250px;
-    margin:0
+
+    margin:0;
 }
 
 .btn{
     background:#151515;
+
     color:#ddd;
+
     border:1px solid #303030;
+
     border-radius:7px;
-    padding:8px 10px;
-    transition:.12s
+
+    padding:
+        8px
+        10px;
+
+    transition:
+        background .12s,
+        transform .08s;
 }
 
 .btn:hover{
-    background:#222
+    background:#222;
 }
 
 .btn:active{
-    transform:scale(.96)
-}
-
-.btn:disabled{
-    opacity:.5;
-    cursor:not-allowed
+    transform:scale(.96);
 }
 
 .green{
     color:#00ff66;
-    border-color:#075c2d
+
+    border-color:#075c2d;
 }
 
-.red{color:#ff6666}
+.red{
+    color:#ff6666;
+}
+
+
+/* =========================
+   BODY
+========================= */
 
 .body{
     display:flex;
+
     flex:1;
-    min-height:0
+
+    min-height:0;
 }
 
 .sidebar{
     width:240px;
+
     flex-shrink:0;
+
     background:#080808;
+
     border-right:1px solid #222;
+
     padding:12px;
-    overflow:auto
+
+    overflow:auto;
 }
 
 .side-title{
     color:#666;
+
     font-size:10px;
-    margin:5px 0 8px
+
+    margin:
+        5px
+        0
+        8px;
 }
 
 .user{
     background:#0d0d0d;
+
     border:1px solid #222;
+
     border-radius:8px;
+
     padding:10px;
-    margin-bottom:15px
+
+    margin-bottom:15px;
 }
 
-.user b{color:#00ff66}
+.user b{
+    color:#00ff66;
+}
 
 .main{
     flex:1;
+
     min-width:0;
+
     display:flex;
-    flex-direction:column
+
+    flex-direction:column;
 }
+
+
+/* =========================
+   TOOLBAR
+========================= */
 
 .toolbar{
     display:flex;
+
     align-items:center;
+
     gap:6px;
+
     padding:8px;
+
     border-bottom:1px solid #222;
-    background:#090909
+
+    background:#090909;
 }
 
 .path{
     flex:1;
+
     min-width:0;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
+
     white-space:nowrap;
-    color:#aaa
+
+    color:#aaa;
 }
 
-.path b{color:#00ff66}
+.path b{
+    color:#00ff66;
+}
+
+
+/* =========================
+   FILE LIST
+========================= */
 
 .file-list{
     flex:1;
-    overflow:auto;
-    padding:7px
+
+    min-height:0;
+
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    padding:
+        7px
+        7px
+        110px;
+
+    -webkit-overflow-scrolling:touch;
+
+    scroll-padding-bottom:110px;
 }
 
 .row{
     display:flex;
+
     align-items:center;
+
     gap:8px;
-    padding:10px 8px;
+
+    min-height:46px;
+
+    padding:
+        10px
+        8px;
+
     border-bottom:1px solid #171717;
-    animation:show .12s ease
+
+    animation:
+        show
+        .12s
+        ease;
+}
+
+.row:hover{
+    background:#101010;
+}
+
+.row:last-child{
+    margin-bottom:45px;
 }
 
 @keyframes show{
+
     from{
         opacity:0;
-        transform:translateY(2px)
+
+        transform:
+            translateY(2px);
     }
+
     to{
         opacity:1;
-        transform:none
-    }
-}
 
-.row:hover{background:#101010}
+        transform:none;
+    }
+
+}
 
 .icon{
     width:25px;
-    text-align:center
+
+    flex-shrink:0;
+
+    text-align:center;
 }
 
 .name{
     flex:1;
+
     min-width:0;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
-    white-space:nowrap
+
+    white-space:nowrap;
 }
 
 .folder{
     color:#55aaff;
-    cursor:pointer
+
+    cursor:pointer;
 }
 
 .meta{
     width:75px;
+
     text-align:right;
+
     color:#666;
-    font-size:11px
+
+    font-size:11px;
 }
 
 .actions{
     display:flex;
-    gap:5px
+
+    gap:5px;
+
+    flex-shrink:0;
 }
 
-.empty,.loading{
+.empty,
+.loading{
     text-align:center;
-    padding:50px 15px;
-    color:#666
+
+    padding:
+        50px
+        15px;
+
+    color:#666;
 }
 
-/* FAST DELETE */
+
+/* =========================
+   FAST REMOVE
+========================= */
 
 .row.removing{
     opacity:0;
-    transform:translateX(20px);
-    transition:.18s
+
+    transform:
+        translateX(20px);
+
+    transition:
+        .18s;
 }
 
-/* STATUS */
+
+/* =========================
+   LOADING BUTTON
+========================= */
+
+.btn.loading{
+    pointer-events:none;
+
+    opacity:.55;
+}
+
+
+/* =========================
+   STATUS
+========================= */
 
 .status{
     position:fixed;
+
     left:50%;
+
     bottom:15px;
-    transform:translateX(-50%);
+
+    transform:
+        translateX(-50%);
+
     background:#111;
+
     border:1px solid #333;
+
     border-radius:8px;
-    padding:10px 14px;
+
+    padding:
+        10px
+        14px;
+
     z-index:500;
+
     font-size:12px;
+
     max-width:90%;
+
     white-space:nowrap;
+
     overflow:hidden;
-    text-overflow:ellipsis
+
+    text-overflow:ellipsis;
 }
 
-.status.ok{color:#00ff66}
-.status.bad{color:#ff5555}
+.status.ok{
+    color:#00ff66;
+}
 
-/* MODAL */
+.status.bad{
+    color:#ff5555;
+}
+
+
+/* =========================
+   MODAL
+========================= */
 
 .modal-bg{
     position:fixed;
+
     inset:0;
+
     background:#000c;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     padding:15px;
-    z-index:1000
+
+    z-index:1000;
 }
 
 .modal{
     width:100%;
+
     max-width:750px;
+
     max-height:92vh;
+
     overflow:auto;
+
     background:#0b0b0b;
+
     border:1px solid #333;
+
     border-radius:10px;
-    padding:15px
+
+    padding:15px;
 }
 
 .modal-head{
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
-    margin-bottom:12px
+
+    margin-bottom:12px;
 }
 
-.modal-title{color:#00ff66}
+.modal-title{
+    color:#00ff66;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+}
 
 textarea{
     width:100%;
+
     min-height:400px;
+
     resize:vertical;
+
     background:#050505;
+
     color:#ddd;
+
     border:1px solid #292929;
+
     border-radius:7px;
+
     padding:12px;
-    outline:none
+
+    outline:none;
 }
 
 .modal-actions{
     display:flex;
+
     justify-content:flex-end;
+
     gap:7px;
-    margin-top:10px
+
+    margin-top:10px;
 }
+
+
+/* =========================
+   PREVIEW
+========================= */
 
 .preview-img{
     max-width:100%;
+
     max-height:70vh;
+
     display:block;
+
     margin:auto;
-    border-radius:7px
+
+    border-radius:7px;
 }
 
 .preview-video{
     width:100%;
+
     max-height:70vh;
-    display:block
+
+    display:block;
 }
+
+
+/* =========================
+   UPLOAD
+========================= */
 
 .upload-item{
     padding:8px 0;
-    border-bottom:1px solid #222
+
+    border-bottom:1px solid #222;
 }
 
 .progress{
     height:5px;
+
     background:#222;
+
     border-radius:5px;
+
     overflow:hidden;
-    margin-top:7px
+
+    margin-top:7px;
 }
 
 .progress-bar{
     height:100%;
+
     width:0;
+
     background:#00c853;
-    transition:.15s
+
+    transition:.15s;
 }
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:700px){
 
-    .sidebar{display:none}
+    .sidebar{
+        display:none;
+    }
 
-    .header{padding:8px}
+    .header{
+        padding:8px;
+    }
 
-    .repo-select{width:220px}
+    .repo-select{
+        width:220px;
+    }
 
-    .meta{display:none}
+    .meta{
+        display:none;
+    }
 
     .actions .btn{
         padding:7px;
-        font-size:10px
+
+        min-width:34px;
+
+        min-height:32px;
+
+        font-size:10px;
     }
 
     .toolbar{
-        overflow:auto
+        overflow-x:auto;
+
+        scrollbar-width:none;
+    }
+
+    .toolbar::-webkit-scrollbar{
+        display:none;
+    }
+
+    .file-list{
+        padding-bottom:120px;
+
+        scroll-padding-bottom:120px;
     }
 
 }
+
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media(max-width:420px){
+
+    .brand{
+        width:100%;
+
+        margin-right:0;
+    }
+
+    .repo-select{
+        flex:1;
+
+        width:auto;
+    }
+
+    .header .btn{
+        padding:8px;
+    }
+
+    .row{
+        gap:5px;
+
+        padding:
+            9px
+            5px;
+    }
+
+    .actions{
+        gap:3px;
+    }
+
+    .actions .btn{
+        min-width:30px;
+
+        padding:6px 5px;
+    }
+
+}
+
 </style>
 </head>
 
+
 <body>
 
-<!-- LOGIN -->
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
 
 <div id="login">
 
-<div class="card">
+    <div class="card">
 
-<div class="logo">
-&gt; YasamGit Manager V3_
+        <div class="logo">
+            &gt; YasamGit Manager V3_
+        </div>
+
+        <div class="muted">
+            Fast GitHub File Manager
+        </div>
+
+
+        <label>
+            GitHub Fine-grained Personal Access Token
+        </label>
+
+        <input
+            id="tokenInput"
+            type="password"
+            placeholder="github_token"
+            autocomplete="off"
+        >
+
+
+        <button
+            id="loginButton"
+            class="primary"
+        >
+            CONNECT GITHUB
+        </button>
+
+
+        <div id="error"></div>
+
+
+        <p class="muted">
+            Token hanya disimpan sementara di
+            sessionStorage browser.
+        </p>
+
+    </div>
+
 </div>
 
-<div class="muted">
-Fast GitHub File Manager
-</div>
 
-<label>
-GitHub Fine-grained Personal Access Token
-</label>
 
-<input
-id="tokenInput"
-type="password"
-placeholder="github_pat_..."
-autocomplete="off"
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<div
+    id="app"
+    class="hidden"
 >
 
-<button
-id="loginButton"
-class="primary"
->
-CONNECT GITHUB
-</button>
-
-<div id="error"></div>
-
-<p class="muted">
-Token disimpan hanya di sessionStorage browser.
-Gunakan Contents: Read and write pada repository yang diperlukan.
-</p>
-
-</div>
-
-</div>
-
-
-<!-- APP -->
-
-<div id="app" class="hidden">
 
 <header class="header">
 
-<div class="brand">
-&gt; YasamGit_
-</div>
+    <div class="brand">
+        &gt; YasamGit_
+    </div>
 
-<select
-id="repoSelect"
-class="repo-select"
->
-<option value="">
-Pilih repository...
-</option>
-</select>
 
-<button
-class="btn"
-id="refreshButton"
->
-↻
-</button>
+    <select
+        id="repoSelect"
+        class="repo-select"
+    >
 
-<button
-class="btn red"
-id="logoutButton"
->
-Logout
-</button>
+        <option value="">
+            Pilih repository...
+        </option>
+
+    </select>
+
+
+    <button
+        class="btn"
+        id="refreshButton"
+        title="Refresh"
+    >
+        ↻
+    </button>
+
+
+    <button
+        class="btn red"
+        id="logoutButton"
+    >
+        Logout
+    </button>
 
 </header>
 
 
+
 <div class="body">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
 
 <aside class="sidebar">
 
-<div class="side-title">
-ACCOUNT
-</div>
+    <div class="side-title">
+        ACCOUNT
+    </div>
 
-<div class="user">
 
-<b id="username">-</b>
+    <div class="user">
 
-<div
-id="repoCount"
-class="muted"
->
--
-</div>
+        <b id="username">
+            -
+        </b>
 
-</div>
+        <div
+            id="repoCount"
+            class="muted"
+        >
+            -
+        </div>
 
-<div class="side-title">
-REPOSITORY
-</div>
+    </div>
 
-<select id="repoSelectSide">
 
-<option value="">
-Pilih repository...
-</option>
+    <div class="side-title">
+        REPOSITORY
+    </div>
 
-</select>
+
+    <select id="repoSelectSide">
+
+        <option value="">
+            Pilih repository...
+        </option>
+
+    </select>
 
 </aside>
 
 
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <main class="main">
+
 
 <div class="toolbar">
 
-<button
-class="btn"
-id="backButton"
->
-←
-</button>
 
-<button
-class="btn"
-id="homeButton"
->
-⌂
-</button>
+    <button
+        class="btn"
+        id="backButton"
+    >
+        ←
+    </button>
+
+
+    <button
+        class="btn"
+        id="homeButton"
+    >
+        ⌂
+    </button>
+
+
+    <div
+        id="path"
+        class="path"
+    >
+        <b>/</b>
+    </div>
+
+
+    <button
+        class="btn green"
+        id="uploadButton"
+    >
+        + Upload
+    </button>
+
+
+    <button
+        class="btn"
+        id="folderButton"
+    >
+        + Folder
+    </button>
+
+
+</div>
+
+
 
 <div
-id="path"
-class="path"
+    id="fileList"
+    class="file-list"
 >
-<b>/</b>
-</div>
 
-<button
-class="btn green"
-id="uploadButton"
->
-+ Upload
-</button>
-
-<button
-class="btn"
-id="folderButton"
->
-+ Folder
-</button>
+    <div class="empty">
+        Pilih repository.
+    </div>
 
 </div>
 
-
-<div
-id="fileList"
-class="file-list"
->
-
-<div class="empty">
-Pilih repository.
-</div>
-
-</div>
 
 </main>
 
@@ -591,163 +1014,201 @@ Pilih repository.
 </div>
 
 
-<!-- UPLOAD MODAL -->
+
+<!-- =====================================================
+     UPLOAD MODAL
+===================================================== -->
 
 <div
-id="uploadModal"
-class="modal-bg hidden"
+    id="uploadModal"
+    class="modal-bg hidden"
 >
 
 <div class="modal">
 
-<div class="modal-head">
 
-<div class="modal-title">
-Upload Files
+    <div class="modal-head">
+
+        <div class="modal-title">
+            Upload Files
+        </div>
+
+
+        <button
+            class="btn"
+            id="closeUpload"
+        >
+            ✕
+        </button>
+
+    </div>
+
+
+    <input
+        id="uploadInput"
+        type="file"
+        multiple
+    >
+
+
+    <div id="uploadQueue"></div>
+
+
+    <div class="modal-actions">
+
+        <button
+            class="btn"
+            id="cancelUpload"
+        >
+            Cancel
+        </button>
+
+
+        <button
+            class="btn green"
+            id="startUpload"
+        >
+            Upload
+        </button>
+
+    </div>
+
 </div>
 
-<button
-class="btn"
-id="closeUpload"
->
-✕
-</button>
-
-</div>
-
-<input
-id="uploadInput"
-type="file"
-multiple
->
-
-<div id="uploadQueue"></div>
-
-<div class="modal-actions">
-
-<button
-class="btn"
-id="cancelUpload"
->
-Cancel
-</button>
-
-<button
-class="btn green"
-id="startUpload"
->
-Upload
-</button>
-
-</div>
-
-</div>
-
 </div>
 
 
-<!-- EDIT -->
+
+<!-- =====================================================
+     EDIT MODAL
+===================================================== -->
 
 <div
-id="editModal"
-class="modal-bg hidden"
+    id="editModal"
+    class="modal-bg hidden"
 >
 
 <div class="modal">
 
-<div class="modal-head">
+
+    <div class="modal-head">
+
+        <div
+            id="editTitle"
+            class="modal-title"
+        >
+            Edit
+        </div>
+
+
+        <button
+            class="btn"
+            id="closeEdit"
+        >
+            ✕
+        </button>
+
+    </div>
+
+
+    <textarea id="editor"></textarea>
+
+
+    <div class="modal-actions">
+
+        <button
+            class="btn"
+            id="cancelEdit"
+        >
+            Cancel
+        </button>
+
+
+        <button
+            class="btn green"
+            id="saveEdit"
+        >
+            Save / Update
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     PREVIEW MODAL
+===================================================== -->
 
 <div
-id="editTitle"
-class="modal-title"
->
-Edit
-</div>
-
-<button
-class="btn"
-id="closeEdit"
->
-✕
-</button>
-
-</div>
-
-<textarea id="editor"></textarea>
-
-<div class="modal-actions">
-
-<button
-class="btn"
-id="cancelEdit"
->
-Cancel
-</button>
-
-<button
-class="btn green"
-id="saveEdit"
->
-Save / Update
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- PREVIEW -->
-
-<div
-id="previewModal"
-class="modal-bg hidden"
+    id="previewModal"
+    class="modal-bg hidden"
 >
 
 <div class="modal">
 
-<div class="modal-head">
+
+    <div class="modal-head">
+
+        <div
+            id="previewTitle"
+            class="modal-title"
+        >
+            Preview
+        </div>
+
+
+        <button
+            class="btn"
+            id="closePreview"
+        >
+            ✕
+        </button>
+
+    </div>
+
+
+    <div id="previewContent"></div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     STATUS
+===================================================== -->
 
 <div
-id="previewTitle"
-class="modal-title"
->
-Preview
-</div>
-
-<button
-class="btn"
-id="closePreview"
->
-✕
-</button>
-
-</div>
-
-<div id="previewContent"></div>
-
-</div>
-
-</div>
-
-
-<div
-id="status"
-class="status hidden"
+    id="status"
+    class="status hidden"
 ></div>
+
 
 
 <script>
 
-const API =
-"https://api.github.com";
 
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const API =
+    "https://api.github.com";
+
+
+/* =====================================================
+   STATE
+===================================================== */
 
 let token =
-sessionStorage.getItem(
-"yasam_github_token"
-);
+    sessionStorage.getItem(
+        "yasam_github_token"
+    );
 
 let repositories = [];
 
@@ -758,128 +1219,211 @@ let currentPath = "";
 let editingFile = null;
 
 
-/* =====================================
+/* =====================================================
    ELEMENTS
-===================================== */
+===================================================== */
 
 const loginPage =
-document.getElementById("login");
+    document.getElementById(
+        "login"
+    );
 
 const app =
-document.getElementById("app");
+    document.getElementById(
+        "app"
+    );
 
 const tokenInput =
-document.getElementById("tokenInput");
+    document.getElementById(
+        "tokenInput"
+    );
 
 const loginButton =
-document.getElementById("loginButton");
+    document.getElementById(
+        "loginButton"
+    );
 
 const errorBox =
-document.getElementById("error");
+    document.getElementById(
+        "error"
+    );
 
 const repoSelect =
-document.getElementById("repoSelect");
+    document.getElementById(
+        "repoSelect"
+    );
 
 const repoSelectSide =
-document.getElementById(
-"repoSelectSide"
-);
+    document.getElementById(
+        "repoSelectSide"
+    );
 
 const fileList =
-document.getElementById(
-"fileList"
-);
+    document.getElementById(
+        "fileList"
+    );
 
 const pathBox =
-document.getElementById(
-"path"
-);
+    document.getElementById(
+        "path"
+    );
 
 const statusBox =
-document.getElementById(
-"status"
-);
+    document.getElementById(
+        "status"
+    );
 
 
-/* =====================================
-   GITHUB API
-===================================== */
+/* =====================================================
+   BUTTON LOADING
+===================================================== */
 
-async function github(
-endpoint,
-options={}
+function buttonLoading(
+    button,
+    loading = true
 ){
 
-const response =
-await fetch(
-API + endpoint,
-{
-method:
-options.method || "GET",
-
-headers:{
-"Accept":
-"application/vnd.github+json",
-
-"Authorization":
-"Bearer " +
-(options.token || token),
-
-"X-GitHub-Api-Version":
-"2022-11-28",
-
-"Content-Type":
-"application/json"
-},
-
-body:
-options.body
-? JSON.stringify(
-options.body
-)
-:null
-}
-);
+    if(!button){
+        return;
+    }
 
 
-let data={};
+    if(loading){
 
-try{
-data=await response.json();
-}catch{}
+        if(
+            !button.dataset.originalText
+        ){
 
+            button.dataset.originalText =
+                button.innerHTML;
 
-if(!response.ok){
+        }
 
-throw new Error(
-data.message ||
-"GitHub API Error " +
-response.status
-);
+        button.disabled =
+            true;
+
+        button.classList.add(
+            "loading"
+        );
+
+        button.innerHTML =
+            "...";
+
+    }else{
+
+        button.disabled =
+            false;
+
+        button.classList.remove(
+            "loading"
+        );
+
+        button.innerHTML =
+            button.dataset.originalText ||
+            "";
+
+        delete button.dataset.originalText;
+
+    }
 
 }
 
 
-return data;
+/* =====================================================
+   GITHUB API
+===================================================== */
+
+async function github(
+    endpoint,
+    options = {}
+){
+
+    const response =
+        await fetch(
+            API + endpoint,
+            {
+                method:
+                    options.method ||
+                    "GET",
+
+                headers:{
+                    "Accept":
+                        "application/vnd.github+json",
+
+                    "Authorization":
+                        "Bearer " +
+                        (
+                            options.token ||
+                            token
+                        ),
+
+                    "X-GitHub-Api-Version":
+                        "2022-11-28",
+
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    options.body
+                    ? JSON.stringify(
+                        options.body
+                    )
+                    : null
+            }
+        );
+
+
+    let data = {};
+
+
+    try{
+
+        data =
+            await response.json();
+
+    }catch{}
+
+
+    if(!response.ok){
+
+        throw new Error(
+            data.message ||
+            "GitHub API Error " +
+            response.status
+        );
+
+    }
+
+
+    return data;
 
 }
 
 
-/* =====================================
+/* =====================================================
    LOGIN
-===================================== */
+===================================================== */
 
 loginButton.onclick =
-login;
+    login;
 
 
 tokenInput.addEventListener(
-"keydown",
-e=>{
-if(e.key==="Enter"){
-login();
-}
-});
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            login();
+
+        }
+
+    }
+);
 
 
 async function login(){
@@ -959,2245 +1503,2713 @@ loginButton.textContent =
 
 }
 
-
-/* =====================================
+/* =====================================================
    AUTO LOGIN
-===================================== */
+===================================================== */
 
 if(token){
 
-autoLogin();
+    autoLogin();
 
 }
 
 
 async function autoLogin(){
 
-try{
+    try{
 
-const user =
-await github("/user");
-
-
-loginPage.classList.add(
-"hidden"
-);
-
-app.classList.remove(
-"hidden"
-);
+        const user =
+            await github(
+                "/user"
+            );
 
 
-document.getElementById(
-"username"
-).textContent =
-user.login;
+        loginPage.classList.add(
+            "hidden"
+        );
+
+        app.classList.remove(
+            "hidden"
+        );
 
 
-await loadRepositories();
+        document.getElementById(
+            "username"
+        ).textContent =
+            user.login;
 
 
-}catch{
+        await loadRepositories();
 
-sessionStorage.removeItem(
-"yasam_github_token"
-);
 
-token=null;
+    }catch{
+
+        sessionStorage.removeItem(
+            "yasam_github_token"
+        );
+
+        token = null;
+
+    }
 
 }
 
-}
 
-
-/* =====================================
-   REPOSITORIES
-===================================== */
+/* =====================================================
+   LOAD REPOSITORIES
+===================================================== */
 
 async function loadRepositories(){
 
-repositories=[];
+    repositories = [];
 
 
-for(
-let page=1;
-page<=10;
-page++
-){
+    for(
+        let page = 1;
+        page <= 10;
+        page++
+    ){
 
-const data =
-await github(
-`/user/repos?per_page=100&page=${page}&sort=updated`
-);
-
-
-repositories.push(
-...data
-);
+        const data =
+            await github(
+                `/user/repos?per_page=100&page=${page}&sort=updated`
+            );
 
 
-if(data.length<100){
-break;
+        repositories.push(
+            ...data
+        );
+
+
+        if(
+            data.length < 100
+        ){
+
+            break;
+
+        }
+
+    }
+
+
+    repoSelect.innerHTML =
+        `
+        <option value="">
+            Pilih repository...
+        </option>
+        `;
+
+
+    repoSelectSide.innerHTML =
+        `
+        <option value="">
+            Pilih repository...
+        </option>
+        `;
+
+
+    repositories.forEach(
+        repo => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                repo.full_name;
+
+
+            option.textContent =
+                repo.name +
+                (
+                    repo.private
+                    ? " 🔒"
+                    : ""
+                );
+
+
+            repoSelect.appendChild(
+                option
+            );
+
+
+            repoSelectSide.appendChild(
+                option.cloneNode(true)
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "repoCount"
+    ).textContent =
+        repositories.length +
+        " repository";
+
 }
 
-}
 
-
-repoSelect.innerHTML =
-`<option value="">
-Pilih repository...
-</option>`;
-
-
-repoSelectSide.innerHTML =
-`<option value="">
-Pilih repository...
-</option>`;
-
-
-repositories.forEach(
-repo=>{
-
-const option =
-document.createElement(
-"option"
-);
-
-option.value =
-repo.full_name;
-
-option.textContent =
-repo.name +
-(
-repo.private
-?" 🔒"
-:""
-);
-
-
-repoSelect.appendChild(
-option
-);
-
-repoSelectSide.appendChild(
-option.cloneNode(true)
-);
-
-}
-);
-
-
-document.getElementById(
-"repoCount"
-).textContent =
-repositories.length +
-" repository";
-
-}
-
-
-/* =====================================
-   SELECT REPO
-===================================== */
+/* =====================================================
+   SELECT REPOSITORY
+===================================================== */
 
 repoSelect.onchange =
-()=>{
-repoSelectSide.value =
-repoSelect.value;
+    () => {
 
-selectRepository(
-repoSelect.value
-);
-};
+        repoSelectSide.value =
+            repoSelect.value;
+
+        selectRepository(
+            repoSelect.value
+        );
+
+    };
 
 
 repoSelectSide.onchange =
-()=>{
-repoSelect.value =
-repoSelectSide.value;
+    () => {
 
-selectRepository(
-repoSelectSide.value
-);
-};
+        repoSelect.value =
+            repoSelectSide.value;
+
+        selectRepository(
+            repoSelectSide.value
+        );
+
+    };
 
 
 async function selectRepository(
-name
+    name
 ){
 
-if(!name){
+    if(!name){
 
-currentRepo=null;
+        currentRepo = null;
 
-fileList.innerHTML =
-`<div class="empty">
-Pilih repository.
-</div>`;
+        currentPath = "";
 
-return;
+        fileList.innerHTML =
+            `
+            <div class="empty">
+                Pilih repository.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    currentRepo =
+        repositories.find(
+            repo =>
+                repo.full_name ===
+                name
+        );
+
+
+    currentPath = "";
+
+
+    await loadFiles();
 
 }
 
 
-currentRepo =
-repositories.find(
-r=>r.full_name===name
-);
-
-
-currentPath="";
-
-await loadFiles();
-
-}
-
-
-/* =====================================
-   PATH
-===================================== */
+/* =====================================================
+   GITHUB PATH
+===================================================== */
 
 function githubPath(
-path=""
+    path = ""
 ){
 
-const owner =
-encodeURIComponent(
-currentRepo.owner.login
-);
-
-const repo =
-encodeURIComponent(
-currentRepo.name
-);
+    const owner =
+        encodeURIComponent(
+            currentRepo.owner.login
+        );
 
 
-const encoded =
-path
-.split("/")
-.filter(Boolean)
-.map(
-encodeURIComponent
-)
-.join("/");
+    const repo =
+        encodeURIComponent(
+            currentRepo.name
+        );
 
 
-return (
-`/repos/${owner}/${repo}/contents/`+
-encoded
-);
+    const encoded =
+        path
+            .split("/")
+            .filter(Boolean)
+            .map(
+                encodeURIComponent
+            )
+            .join("/");
+
+
+    return (
+        `/repos/${owner}/${repo}/contents/` +
+        encoded
+    );
+
+}
+
+
+/* =====================================================
+   JOIN PATH
+===================================================== */
+
+function joinPath(
+    ...parts
+){
+
+    return parts
+        .filter(Boolean)
+        .join("/")
+        .replace(
+            /\/+/g,
+            "/"
+        )
+        .replace(
+            /^\//,
+            ""
+        );
 
 }
 
 
-function joinPath(...parts){
-
-return parts
-.filter(Boolean)
-.join("/")
-.replace(
-/\/+/g,
-"/"
-)
-.replace(
-/^\//,
-""
-);
-
-}
-
+/* =====================================================
+   UPDATE PATH
+===================================================== */
 
 function updatePath(){
 
-pathBox.innerHTML =
-"<b>/</b> "+
-escapeHtml(
-currentPath
-);
+    pathBox.innerHTML =
+        "<b>/</b> " +
+        escapeHtml(
+            currentPath
+        );
 
 }
 
 
-/* =====================================
+/* =====================================================
    LOAD FILES
-===================================== */
+===================================================== */
 
 async function loadFiles(){
 
-if(!currentRepo){
-return;
+    if(!currentRepo){
+
+        return;
+
+    }
+
+
+    updatePath();
+
+
+    fileList.innerHTML =
+        `
+        <div class="loading">
+            Loading...
+        </div>
+        `;
+
+
+    try{
+
+        let files =
+            await github(
+                githubPath(
+                    currentPath
+                ) +
+                "?ref=" +
+                encodeURIComponent(
+                    currentRepo.default_branch
+                )
+            );
+
+
+        if(
+            !Array.isArray(files)
+        ){
+
+            files = [
+                files
+            ];
+
+        }
+
+
+        files.sort(
+            (a,b) => {
+
+                if(
+                    a.type ===
+                    b.type
+                ){
+
+                    return a.name
+                        .localeCompare(
+                            b.name
+                        );
+
+                }
+
+
+                return (
+                    a.type ===
+                    "dir"
+                )
+                ? -1
+                : 1;
+
+            }
+        );
+
+
+        renderFiles(
+            files
+        );
+
+
+    }catch(error){
+
+        fileList.innerHTML =
+            `
+            <div class="empty">
+                ${escapeHtml(
+                    error.message
+                )}
+            </div>
+            `;
+
+    }
+
 }
 
 
-updatePath();
-
-
-try{
-
-let files =
-await github(
-githubPath(
-currentPath
-)+
-"?ref="+
-encodeURIComponent(
-currentRepo.default_branch
-)
-);
-
-
-if(!Array.isArray(files)){
-files=[files];
-}
-
-
-files.sort(
-(a,b)=>{
-
-if(a.type===b.type){
-return a.name.localeCompare(
-b.name
-);
-}
-
-return a.type==="dir"
-?-1
-:1;
-
-}
-);
-
-
-renderFiles(files);
-
-
-}catch(error){
-
-fileList.innerHTML =
-`<div class="empty">
-${escapeHtml(
-error.message
-)}
-</div>`;
-
-}
-
-}
-
-
-/* =====================================
-   RENDER
-===================================== */
+/* =====================================================
+   RENDER FILES
+===================================================== */
 
 function renderFiles(
-files
+    files
 ){
 
-fileList.innerHTML="";
+    fileList.innerHTML =
+        "";
 
 
-if(currentPath){
+    if(currentPath){
 
-const row =
-document.createElement(
-"div"
-);
+        const row =
+            document.createElement(
+                "div"
+            );
 
-row.className="row";
 
-row.innerHTML=`
-<div class="icon">↩</div>
-<div class="name folder">..</div>
-`;
+        row.className =
+            "row";
 
-row.querySelector(
-".name"
-).onclick =
-goBack;
 
-fileList.appendChild(
-row
-);
+        row.innerHTML =
+            `
+            <div class="icon">
+                ↩
+            </div>
+
+            <div class="name folder">
+                ..
+            </div>
+            `;
+
+
+        row.querySelector(
+            ".name"
+        ).onclick =
+            goBack;
+
+
+        fileList.appendChild(
+            row
+        );
+
+    }
+
+
+    if(!files.length){
+
+        fileList.innerHTML +=
+            `
+            <div class="empty">
+                Folder kosong.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    files.forEach(
+        file => {
+
+            fileList.appendChild(
+                createRow(
+                    file
+                )
+            );
+
+        }
+    );
 
 }
 
 
-if(!files.length){
-
-fileList.innerHTML +=
-`<div class="empty">
-Folder kosong.
-</div>`;
-
-return;
-
-}
-
-
-files.forEach(
-file=>{
-
-fileList.appendChild(
-createRow(file)
-);
-
-}
-);
-
-}
-
-
-/* =====================================
-   CREATE ROW
-===================================== */
+/* =====================================================
+   CREATE FILE ROW
+===================================================== */
 
 function createRow(
-file
+    file
 ){
 
-const row =
-document.createElement(
-"div"
-);
-
-row.className="row";
-
-row.dataset.path =
-file.path;
+    const row =
+        document.createElement(
+            "div"
+        );
 
 
-const folder =
-file.type==="dir";
+    row.className =
+        "row";
 
 
-row.innerHTML=`
+    row.dataset.path =
+        file.path;
 
-<div class="icon">
-${
-folder
-?"📁"
-:fileIcon(file.name)
+
+    const folder =
+        file.type === "dir";
+
+
+    row.innerHTML =
+        `
+
+        <div class="icon">
+
+            ${
+                folder
+                ? "📁"
+                : fileIcon(
+                    file.name
+                )
+            }
+
+        </div>
+
+
+        <div
+            class="name ${
+                folder
+                ? "folder"
+                : ""
+            }"
+        >
+
+            ${escapeHtml(
+                file.name
+            )}
+
+        </div>
+
+
+        <div class="meta">
+
+            ${
+                folder
+                ? "-"
+                : formatBytes(
+                    file.size || 0
+                )
+            }
+
+        </div>
+
+
+        <div class="actions">
+
+
+            ${
+                !folder
+                ?
+
+                `
+
+                <button
+                    class="btn view"
+                >
+                    View
+                </button>
+
+
+                <button
+                    class="btn edit"
+                >
+                    Edit
+                </button>
+
+
+                <button
+                    class="btn download"
+                >
+                    ↓
+                </button>
+
+                `
+                :
+                ""
+            }
+
+
+            <button
+                class="btn rename"
+            >
+                Rename
+            </button>
+
+
+            <button
+                class="btn red delete"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+        `;
+
+
+    if(folder){
+
+        row.querySelector(
+            ".name"
+        ).onclick =
+            () => {
+
+                currentPath =
+                    joinPath(
+                        currentPath,
+                        file.name
+                    );
+
+                loadFiles();
+
+            };
+
+    }else{
+
+        row.querySelector(
+            ".view"
+        ).onclick =
+            event => {
+
+                preview(
+                    file,
+                    event.currentTarget
+                );
+
+            };
+
+
+        row.querySelector(
+            ".edit"
+        ).onclick =
+            event => {
+
+                editFile(
+                    file,
+                    event.currentTarget
+                );
+
+            };
+
+
+        row.querySelector(
+            ".download"
+        ).onclick =
+            event => {
+
+                downloadFile(
+                    file,
+                    event.currentTarget
+                );
+
+            };
+
+    }
+
+
+    row.querySelector(
+        ".rename"
+    ).onclick =
+        event => {
+
+            renameFile(
+                file,
+                row,
+                event.currentTarget
+            );
+
+        };
+
+
+    row.querySelector(
+        ".delete"
+    ).onclick =
+        event => {
+
+            deleteFile(
+                file,
+                row,
+                event.currentTarget
+            );
+
+        };
+
+
+    return row;
+
 }
-</div>
-
-<div class="name ${
-folder
-?"folder"
-:""
-}">
-${escapeHtml(
-file.name
-)}
-</div>
-
-<div class="meta">
-${
-folder
-?"-"
-:formatBytes(
-file.size||0
-)
-}
-</div>
-
-<div class="actions">
-
-${
-!folder
-?`
-
-<button
-class="btn view"
->
-View
-</button>
-
-<button
-class="btn edit"
->
-Edit
-</button>
-
-<button
-class="btn download"
->
-↓
-</button>
-
-`
-:""
-}
-
-<button
-class="btn rename"
->
-Rename
-</button>
-
-<button
-class="btn red delete"
->
-×
-</button>
-
-</div>
-`;
 
 
-if(folder){
-
-row.querySelector(
-".name"
-).onclick =
-()=>{
-
-currentPath =
-joinPath(
-currentPath,
-file.name
-);
-
-loadFiles();
-
-};
-
-}else{
-
-row.querySelector(
-".view"
-).onclick =
-()=>preview(file);
-
-row.querySelector(
-".edit"
-).onclick =
-()=>editFile(file);
-
-row.querySelector(
-".download"
-).onclick =
-()=>downloadFile(file);
-
-}
-
-
-row.querySelector(
-".rename"
-).onclick =
-()=>renameFile(
-file,
-row
-);
-
-
-row.querySelector(
-".delete"
-).onclick =
-()=>deleteFile(
-file,
-row
-);
-
-
-return row;
-
-}
-
-
-/* =====================================
+/* =====================================================
    NAVIGATION
-===================================== */
+===================================================== */
 
 function goBack(){
 
-if(!currentPath){
-return;
-}
+    if(!currentPath){
+
+        return;
+
+    }
 
 
-const parts =
-currentPath
-.split("/")
-.filter(Boolean);
+    const parts =
+        currentPath
+            .split("/")
+            .filter(Boolean);
 
 
-parts.pop();
+    parts.pop();
 
 
-currentPath =
-parts.join("/");
+    currentPath =
+        parts.join("/");
 
 
-loadFiles();
+    loadFiles();
 
 }
 
 
 document.getElementById(
-"backButton"
+    "backButton"
 ).onclick =
-goBack;
+    event => {
+
+        const button =
+            event.currentTarget;
+
+        buttonLoading(
+            button
+        );
+
+        goBack();
+
+        setTimeout(
+            () => {
+                buttonLoading(
+                    button,
+                    false
+                );
+            },
+            250
+        );
+
+    };
 
 
 document.getElementById(
-"homeButton"
+    "homeButton"
 ).onclick =
-()=>{
+    event => {
 
-currentPath="";
+        const button =
+            event.currentTarget;
 
-loadFiles();
+        buttonLoading(
+            button
+        );
 
-};
+        currentPath = "";
+
+        loadFiles();
+
+        setTimeout(
+            () => {
+                buttonLoading(
+                    button,
+                    false
+                );
+            },
+            250
+        );
+
+    };
 
 
-/*
- * Manual refresh = full sync.
- */
+/* =====================================================
+   REFRESH
+===================================================== */
 
 document.getElementById(
-"refreshButton"
+    "refreshButton"
 ).onclick =
-()=>{
+    async event => {
 
-if(currentRepo){
+        const button =
+            event.currentTarget;
 
-loadFiles();
-
-}
-
-};
+        buttonLoading(
+            button
+        );
 
 
-/* =====================================
-   FAST DELETE
-===================================== */
+        try{
+
+            await loadFiles();
+
+        }finally{
+
+            buttonLoading(
+                button,
+                false
+            );
+
+        }
+
+    };
+
+
+/* =====================================================
+   DELETE FILE
+===================================================== */
 
 async function deleteFile(
-file,
-row
+    file,
+    row,
+    button
 ){
 
-if(
-!confirm(
-`Hapus "${file.name}"?`
-)
-){
-return;
-}
+    if(
+        !confirm(
+            `Hapus "${file.name}"?`
+        )
+    ){
+
+        return;
+
+    }
 
 
-const button =
-row.querySelector(
-".delete"
-);
+    buttonLoading(
+        button
+    );
 
 
-button.disabled=true;
+    /*
+     * Hilangkan langsung dari UI.
+     */
 
-button.textContent="...";
-
-
-/*
- * UI langsung hilangkan row.
- */
-
-row.classList.add(
-"removing"
-);
+    row.classList.add(
+        "removing"
+    );
 
 
-setTimeout(
-()=>{
+    setTimeout(
+        () => {
 
-if(row.parentNode){
-row.remove();
-}
+            if(row.parentNode){
 
-},
-180
-);
+                row.remove();
 
+            }
 
-try{
-
-if(file.type==="dir"){
-
-await deleteFolder(
-file.path
-);
-
-}else{
-
-await github(
-githubPath(
-file.path
-),
-{
-method:"DELETE",
-
-body:{
-
-message:
-"Delete "+
-file.path,
-
-sha:
-file.sha,
-
-branch:
-currentRepo.default_branch
-
-}
-
-}
-);
-
-}
+        },
+        180
+    );
 
 
-status(
-"✓ "+
-file.name+
-" berhasil dihapus.",
-"ok"
-);
+    try{
+
+        if(
+            file.type ===
+            "dir"
+        ){
+
+            await deleteFolder(
+                file.path
+            );
+
+        }else{
+
+            await github(
+                githubPath(
+                    file.path
+                ),
+                {
+                    method:"DELETE",
+
+                    body:{
+
+                        message:
+                            "Delete " +
+                            file.path,
+
+                        sha:
+                            file.sha,
+
+                        branch:
+                            currentRepo
+                                .default_branch
+
+                    }
+                }
+            );
+
+        }
 
 
-/*
- * Tidak loadFiles().
- * UI sudah berubah.
- */
+        status(
+            "✓ " +
+            file.name +
+            " berhasil dihapus.",
+            "ok"
+        );
 
 
-}catch(error){
+    }catch(error){
 
-/*
- * Jika gagal, ambil ulang
- * supaya UI kembali sinkron.
- */
+        status(
+            "Delete gagal: " +
+            error.message,
+            "bad"
+        );
 
-status(
-"Delete gagal: "+
-error.message,
-"bad"
-);
 
-await loadFiles();
+        await loadFiles();
 
-}
+    }finally{
+
+        buttonLoading(
+            button,
+            false
+        );
+
+    }
 
 }
 
 
-/* =====================================
+/* =====================================================
    DELETE FOLDER
-===================================== */
+===================================================== */
 
 async function deleteFolder(
-folder
+    folder
 ){
 
-const files =
-await github(
-githubPath(folder)
-);
+    const files =
+        await github(
+            githubPath(
+                folder
+            )
+        );
 
 
-for(
-const file of files
-){
+    for(
+        const file of files
+    ){
 
-if(file.type==="dir"){
+        if(
+            file.type ===
+            "dir"
+        ){
 
-await deleteFolder(
-file.path
-);
+            await deleteFolder(
+                file.path
+            );
 
-}else{
+        }else{
 
-await github(
-githubPath(
-file.path
-),
-{
-method:"DELETE",
+            await github(
+                githubPath(
+                    file.path
+                ),
+                {
+                    method:"DELETE",
 
-body:{
+                    body:{
 
-message:
-"Delete "+
-file.path,
+                        message:
+                            "Delete " +
+                            file.path,
 
-sha:
-file.sha,
+                        sha:
+                            file.sha,
 
-branch:
-currentRepo.default_branch
+                        branch:
+                            currentRepo
+                                .default_branch
+
+                    }
+                }
+            );
+
+        }
+
+    }
 
 }
 
-}
-);
 
-}
-
-}
-
-}
-
-
-/* =====================================
+/* =====================================================
    RENAME
-===================================== */
+===================================================== */
 
 async function renameFile(
-file,
-row
+    file,
+    row,
+    button
 ){
 
-const newName =
-prompt(
-"Nama baru:",
-file.name
-);
+    const newName =
+        prompt(
+            "Nama baru:",
+            file.name
+        );
 
 
-if(
-!newName ||
-newName===file.name
-){
-return;
+    if(
+        !newName ||
+        newName ===
+        file.name
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        newName.includes("/") ||
+        newName.includes("\\")
+    ){
+
+        status(
+            "Nama file tidak valid.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+
+    const oldPath =
+        file.path;
+
+
+    const newPath =
+        joinPath(
+            currentPath,
+            newName
+        );
+
+
+    buttonLoading(
+        button
+    );
+
+
+    try{
+
+        if(
+            file.type ===
+            "dir"
+        ){
+
+            await copyFolder(
+                oldPath,
+                newPath
+            );
+
+
+            await deleteFolder(
+                oldPath
+            );
+
+        }else{
+
+            const data =
+                await github(
+                    githubPath(
+                        oldPath
+                    )
+                );
+
+
+            const body = {
+
+                message:
+                    `Rename ${oldPath} to ${newPath}`,
+
+                content:
+                    data.content.replace(
+                        /\n/g,
+                        ""
+                    ),
+
+                branch:
+                    currentRepo
+                        .default_branch
+
+            };
+
+
+            let target = null;
+
+
+            try{
+
+                target =
+                    await github(
+                        githubPath(
+                            newPath
+                        )
+                    );
+
+            }catch{}
+
+
+            if(
+                target?.sha
+            ){
+
+                body.sha =
+                    target.sha;
+
+            }
+
+
+            await github(
+                githubPath(
+                    newPath
+                ),
+                {
+                    method:"PUT",
+                    body
+                }
+            );
+
+
+            await github(
+                githubPath(
+                    oldPath
+                ),
+                {
+                    method:"DELETE",
+
+                    body:{
+
+                        message:
+                            "Delete old " +
+                            oldPath,
+
+                        sha:
+                            file.sha,
+
+                        branch:
+                            currentRepo
+                                .default_branch
+
+                    }
+                }
+            );
+
+        }
+
+
+        /*
+         * UI langsung diperbarui.
+         */
+
+        const nameElement =
+            row.querySelector(
+                ".name"
+            );
+
+
+        nameElement.textContent =
+            newName;
+
+
+        row.dataset.path =
+            newPath;
+
+
+        status(
+            "✓ Rename berhasil.",
+            "ok"
+        );
+
+
+        /*
+         * Sinkronisasi background.
+         */
+
+        setTimeout(
+            () => {
+
+                if(
+                    currentRepo
+                ){
+
+                    loadFiles();
+
+                }
+
+            },
+            1000
+        );
+
+
+    }catch(error){
+
+        status(
+            "Rename gagal: " +
+            error.message,
+            "bad"
+        );
+
+
+        await loadFiles();
+
+    }finally{
+
+        buttonLoading(
+            button,
+            false
+        );
+
+    }
+
 }
 
 
-if(
-newName.includes("/") ||
-newName.includes("\\")
-){
-
-status(
-"Nama file tidak valid.",
-"bad"
-);
-
-return;
-
-}
-
-
-const oldPath =
-file.path;
-
-
-const newPath =
-joinPath(
-currentPath,
-newName
-);
-
-
-const button =
-row.querySelector(
-".rename"
-);
-
-
-button.disabled=true;
-
-button.textContent="...";
-
-
-try{
-
-/*
- * Folder
- */
-
-if(file.type==="dir"){
-
-await copyFolder(
-oldPath,
-newPath
-);
-
-await deleteFolder(
-oldPath
-);
-
-}
-
-/*
- * File
- */
-
-else{
-
-const data =
-await github(
-githubPath(oldPath)
-);
-
-
-let target=null;
-
-
-try{
-
-target =
-await github(
-githubPath(newPath)
-);
-
-}catch{}
-
-
-const body={
-
-message:
-`Rename ${oldPath} to ${newPath}`,
-
-content:
-data.content.replace(
-/\n/g,
-""
-),
-
-branch:
-currentRepo.default_branch
-
-};
-
-
-if(target?.sha){
-
-body.sha=
-target.sha;
-
-}
-
-
-await github(
-githubPath(newPath),
-{
-method:"PUT",
-body
-}
-);
-
-
-await github(
-githubPath(oldPath),
-{
-method:"DELETE",
-
-body:{
-
-message:
-"Delete old "+
-oldPath,
-
-sha:
-file.sha,
-
-branch:
-currentRepo.default_branch
-
-}
-
-}
-);
-
-}
-
-
-/*
- * UI langsung ubah.
- */
-
-const name =
-row.querySelector(
-".name"
-);
-
-name.textContent =
-newName;
-
-
-row.dataset.path =
-newPath;
-
-
-/*
- * Setelah sedikit delay,
- * sync background.
- */
-
-status(
-"✓ Rename berhasil.",
-"ok"
-);
-
-
-setTimeout(
-()=>loadFiles(),
-600
-);
-
-
-}catch(error){
-
-status(
-"Rename gagal: "+
-error.message,
-"bad"
-);
-
-await loadFiles();
-
-}finally{
-
-button.disabled=false;
-
-button.textContent=
-"Rename";
-
-}
-
-}
-
-
-/* =====================================
+/* =====================================================
    COPY FOLDER
-===================================== */
+===================================================== */
 
 async function copyFolder(
-source,
-target
+    source,
+    target
 ){
 
-const files =
-await github(
-githubPath(source)
-);
+    const files =
+        await github(
+            githubPath(
+                source
+            )
+        );
 
 
-for(
-const file of files
-){
+    for(
+        const file of files
+    ){
 
-const newPath =
-joinPath(
-target,
-file.name
-);
-
-
-if(file.type==="dir"){
-
-await copyFolder(
-file.path,
-newPath
-);
-
-}else{
-
-const data =
-await github(
-githubPath(
-file.path
-)
-);
+        const newPath =
+            joinPath(
+                target,
+                file.name
+            );
 
 
-await github(
-githubPath(
-newPath
-),
-{
-method:"PUT",
+        if(
+            file.type ===
+            "dir"
+        ){
 
-body:{
+            await copyFolder(
+                file.path,
+                newPath
+            );
 
-message:
-"Rename folder",
+        }else{
 
-content:
-data.content.replace(
-/\n/g,
-""
-),
+            const data =
+                await github(
+                    githubPath(
+                        file.path
+                    )
+                );
 
-branch:
-currentRepo.default_branch
+
+            await github(
+                githubPath(
+                    newPath
+                ),
+                {
+                    method:"PUT",
+
+                    body:{
+
+                        message:
+                            "Rename folder",
+
+                        content:
+                            data.content
+                                .replace(
+                                    /\n/g,
+                                    ""
+                                ),
+
+                        branch:
+                            currentRepo
+                                .default_branch
+
+                    }
+                }
+            );
+
+        }
+
+    }
 
 }
 
-}
-);
 
-}
-
-}
-
-}
-
-
-/* =====================================
-   UPLOAD
-===================================== */
+/* =====================================================
+   UPLOAD MODAL
+===================================================== */
 
 const uploadModal =
-document.getElementById(
-"uploadModal"
-);
+    document.getElementById(
+        "uploadModal"
+    );
 
 const uploadInput =
-document.getElementById(
-"uploadInput"
-);
+    document.getElementById(
+        "uploadInput"
+    );
 
 const uploadQueue =
-document.getElementById(
-"uploadQueue"
-);
+    document.getElementById(
+        "uploadQueue"
+    );
 
 
 document.getElementById(
-"uploadButton"
+    "uploadButton"
 ).onclick =
-()=>{
+    event => {
 
-if(!currentRepo){
-
-status(
-"Pilih repository.",
-"bad"
-);
-
-return;
-
-}
+        const button =
+            event.currentTarget;
 
 
-uploadInput.value="";
+        if(!currentRepo){
 
-uploadQueue.innerHTML="";
+            status(
+                "Pilih repository.",
+                "bad"
+            );
 
-uploadModal.classList.remove(
-"hidden"
-);
+            return;
 
-};
+        }
+
+
+        buttonLoading(
+            button
+        );
+
+
+        uploadInput.value =
+            "";
+
+        uploadQueue.innerHTML =
+            "";
+
+
+        uploadModal.classList.remove(
+            "hidden"
+        );
+
+
+        setTimeout(
+            () => {
+
+                buttonLoading(
+                    button,
+                    false
+                );
+
+            },
+            200
+        );
+
+    };
 
 
 document.getElementById(
-"closeUpload"
+    "closeUpload"
 ).onclick =
-document.getElementById(
-"cancelUpload"
-).onclick =
-()=>{
+    document.getElementById(
+        "cancelUpload"
+    ).onclick =
+    () => {
 
-uploadModal.classList.add(
-"hidden"
-);
+        uploadModal.classList.add(
+            "hidden"
+        );
 
-};
+    };
 
 
 uploadInput.onchange =
-()=>{
+    () => {
 
-uploadQueue.innerHTML="";
-
-
-[
-...uploadInput.files
-].forEach(
-(file,index)=>{
-
-uploadQueue.innerHTML += `
-
-<div class="upload-item">
-
-<b>
-${escapeHtml(
-file.name
-)}
-</b>
-
-<span class="muted">
-${formatBytes(
-file.size
-)}
-</span>
-
-<div class="progress">
-
-<div
-id="progress${index}"
-class="progress-bar"
-></div>
-
-</div>
-
-</div>
-
-`;
-
-}
-);
-
-};
+        uploadQueue.innerHTML =
+            "";
 
 
-/* =====================================
-   UPLOAD START
-===================================== */
+        [
+            ...uploadInput.files
+        ].forEach(
+            (file,index) => {
+
+                uploadQueue.innerHTML +=
+                    `
+
+                    <div class="upload-item">
+
+                        <b>
+                            ${escapeHtml(
+                                file.name
+                            )}
+                        </b>
+
+                        <span class="muted">
+                            ${formatBytes(
+                                file.size
+                            )}
+                        </span>
+
+
+                        <div class="progress">
+
+                            <div
+                                id="progress${index}"
+                                class="progress-bar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+            }
+        );
+
+    };
+
+
+/* =====================================================
+   START UPLOAD
+===================================================== */
 
 document.getElementById(
-"startUpload"
+    "startUpload"
 ).onclick =
-async ()=>{
+    async event => {
 
-const files =
-[
-...uploadInput.files
-];
+        const button =
+            event.currentTarget;
 
 
-if(!files.length){
-
-status(
-"Pilih file.",
-"bad"
-);
-
-return;
-
-}
+        const files =
+            [
+                ...uploadInput.files
+            ];
 
 
-for(
-let i=0;
-i<files.length;
-i++
-){
+        if(!files.length){
 
-await uploadFile(
-files[i],
-i
-);
+            status(
+                "Pilih file.",
+                "bad"
+            );
 
-}
+            return;
+
+        }
 
 
-uploadModal.classList.add(
-"hidden"
-);
+        buttonLoading(
+            button
+        );
 
 
-/*
- * Full sync sekali setelah
- * semua upload selesai.
- */
+        try{
 
-await loadFiles();
+            for(
+                let i = 0;
+                i < files.length;
+                i++
+            ){
 
-};
+                await uploadFile(
+                    files[i],
+                    i
+                );
+
+            }
 
 
-/* =====================================
+            uploadModal.classList.add(
+                "hidden"
+            );
+
+
+            await loadFiles();
+
+
+        }finally{
+
+            buttonLoading(
+                button,
+                false
+            );
+
+        }
+
+    };
+
+
+/* =====================================================
    UPLOAD FILE
-===================================== */
+===================================================== */
 
 async function uploadFile(
-file,
-index
+    file,
+    index
 ){
 
-try{
+    try{
 
-status(
-"Uploading "+
-file.name+
-"..."
-);
-
-
-const buffer =
-await file.arrayBuffer();
+        status(
+            "Uploading " +
+            file.name +
+            "..."
+        );
 
 
-const content =
-arrayBufferToBase64(
-buffer
-);
+        const buffer =
+            await file.arrayBuffer();
 
 
-const target =
-joinPath(
-currentPath,
-file.name
-);
+        const content =
+            arrayBufferToBase64(
+                buffer
+            );
 
 
-let existing=null;
+        const target =
+            joinPath(
+                currentPath,
+                file.name
+            );
 
 
-try{
+        let existing = null;
 
-existing =
-await github(
-githubPath(target)+
-"?ref="+
-encodeURIComponent(
-currentRepo.default_branch
-)
-);
 
-}catch(error){
+        try{
 
-if(
-!(
-error.message.includes(
-"Not Found"
-) ||
-error.message.includes(
-"404"
-)
-)
-){
+            existing =
+                await github(
+                    githubPath(
+                        target
+                    ) +
+                    "?ref=" +
+                    encodeURIComponent(
+                        currentRepo
+                            .default_branch
+                    )
+                );
 
-throw error;
+        }catch(error){
+
+            if(
+                !(
+                    error.message
+                        .includes(
+                            "Not Found"
+                        ) ||
+                    error.message
+                        .includes(
+                            "404"
+                        )
+                )
+            ){
+
+                throw error;
+
+            }
+
+        }
+
+
+        const body = {
+
+            message:
+                existing
+                ? "Update " + target
+                : "Upload " + target,
+
+            content,
+
+            branch:
+                currentRepo
+                    .default_branch
+
+        };
+
+
+        /*
+         * Kalau sudah ada,
+         * otomatis ditimpa.
+         */
+
+        if(
+            existing?.sha
+        ){
+
+            body.sha =
+                existing.sha;
+
+        }
+
+
+        await github(
+            githubPath(
+                target
+            ),
+            {
+                method:"PUT",
+                body
+            }
+        );
+
+
+        const progress =
+            document.getElementById(
+                "progress" +
+                index
+            );
+
+
+        if(progress){
+
+            progress.style.width =
+                "100%";
+
+        }
+
+
+        status(
+            "✓ " +
+            file.name +
+            (
+                existing
+                ? " ditimpa."
+                : " diupload."
+            ),
+            "ok"
+        );
+
+
+    }catch(error){
+
+        status(
+            "Upload gagal: " +
+            error.message,
+            "bad"
+        );
+
+    }
 
 }
 
-}
 
-
-const body={
-
-message:
-existing
-?"Update "+target
-:"Upload "+target,
-
-content,
-
-branch:
-currentRepo.default_branch
-
-};
-
-
-if(existing?.sha){
-
-body.sha=
-existing.sha;
-
-}
-
-
-await github(
-githubPath(target),
-{
-method:"PUT",
-body
-}
-);
-
-
-const bar =
-document.getElementById(
-"progress"+
-index
-);
-
-
-if(bar){
-
-bar.style.width="100%";
-
-}
-
-
-status(
-"✓ "+
-file.name+
-(
-existing
-?" ditimpa."
-:" diupload."
-),
-"ok"
-);
-
-
-}catch(error){
-
-status(
-"Upload gagal: "+
-error.message,
-"bad"
-);
-
-}
-
-}
-
-
-/* =====================================
+/* =====================================================
    CREATE FOLDER
-===================================== */
+===================================================== */
 
 document.getElementById(
-"folderButton"
+    "folderButton"
 ).onclick =
-async ()=>{
+    async event => {
 
-if(!currentRepo){
-
-status(
-"Pilih repository.",
-"bad"
-);
-
-return;
-
-}
+        const button =
+            event.currentTarget;
 
 
-const name =
-prompt(
-"Nama folder:"
-);
+        if(!currentRepo){
+
+            status(
+                "Pilih repository.",
+                "bad"
+            );
+
+            return;
+
+        }
 
 
-if(!name){
-return;
-}
+        const name =
+            prompt(
+                "Nama folder:"
+            );
 
 
-if(
-name.includes("/") ||
-name.includes("\\")
-){
+        if(!name){
 
-status(
-"Nama folder tidak valid.",
-"bad"
-);
+            return;
 
-return;
-
-}
+        }
 
 
-const target =
-joinPath(
-currentPath,
-name,
-".gitkeep"
-);
+        if(
+            name.includes("/") ||
+            name.includes("\\")
+        ){
+
+            status(
+                "Nama folder tidak valid.",
+                "bad"
+            );
+
+            return;
+
+        }
 
 
-try{
-
-await github(
-githubPath(target),
-{
-method:"PUT",
-
-body:{
-
-message:
-"Create folder "+
-name,
-
-content:
-textToBase64(""),
-
-branch:
-currentRepo.default_branch
-
-}
-
-}
-);
+        const target =
+            joinPath(
+                currentPath,
+                name,
+                ".gitkeep"
+            );
 
 
-/*
- * Tambahkan folder ke UI
- * tanpa full reload.
- */
-
-if(
-!currentPath ||
-currentPath
-){
-
-const folderPath =
-joinPath(
-currentPath,
-name
-);
+        buttonLoading(
+            button
+        );
 
 
-const fakeFile={
-type:"dir",
-name,
-path:folderPath,
-size:0
-};
+        try{
+
+            await github(
+                githubPath(
+                    target
+                ),
+                {
+                    method:"PUT",
+
+                    body:{
+
+                        message:
+                            "Create folder " +
+                            name,
+
+                        content:
+                            textToBase64(
+                                ""
+                            ),
+
+                        branch:
+                            currentRepo
+                                .default_branch
+
+                    }
+                }
+            );
 
 
-const row =
-createRow(fakeFile);
+            /*
+             * Tambahkan folder langsung.
+             */
+
+            const fakeFile = {
+
+                type:"dir",
+
+                name,
+
+                path:
+                    joinPath(
+                        currentPath,
+                        name
+                    ),
+
+                size:0
+
+            };
 
 
-const empty =
-fileList.querySelector(
-".empty"
-);
+            const row =
+                createRow(
+                    fakeFile
+                );
 
 
-if(empty){
-
-empty.remove();
-
-}
-
-
-fileList.appendChild(
-row
-);
-
-}
+            const empty =
+                fileList.querySelector(
+                    ".empty"
+                );
 
 
-status(
-"✓ Folder dibuat.",
-"ok"
-);
+            if(empty){
+
+                empty.remove();
+
+            }
 
 
-}catch(error){
-
-status(
-"Create folder gagal: "+
-error.message,
-"bad"
-);
-
-}
-
-};
+            fileList.appendChild(
+                row
+            );
 
 
-/* =====================================
-   EDIT
-===================================== */
+            status(
+                "✓ Folder dibuat.",
+                "ok"
+            );
+
+
+        }catch(error){
+
+            status(
+                "Create folder gagal: " +
+                error.message,
+                "bad"
+            );
+
+
+        }finally{
+
+            buttonLoading(
+                button,
+                false
+            );
+
+        }
+
+    };
+
+
+/* =====================================================
+   EDIT FILE
+===================================================== */
 
 async function editFile(
-file
+    file,
+    button
 ){
 
-try{
-
-const data =
-await github(
-githubPath(
-file.path
-)
-);
+    buttonLoading(
+        button
+    );
 
 
-if(
-data.encoding!=="base64"
-){
+    try{
 
-throw new Error(
-"File tidak bisa diedit."
-);
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
+
+
+        if(
+            data.encoding !==
+            "base64"
+        ){
+
+            throw new Error(
+                "File tidak bisa diedit."
+            );
+
+        }
+
+
+        editingFile = data;
+
+
+        document.getElementById(
+            "editTitle"
+        ).textContent =
+            data.path;
+
+
+        document.getElementById(
+            "editor"
+        ).value =
+            base64ToText(
+                data.content
+            );
+
+
+        document.getElementById(
+            "editModal"
+        ).classList.remove(
+            "hidden"
+        );
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }finally{
+
+        buttonLoading(
+            button,
+            false
+        );
+
+    }
 
 }
 
 
-editingFile=data;
-
-
-document.getElementById(
-"editTitle"
-).textContent =
-data.path;
-
-
-document.getElementById(
-"editor"
-).value =
-base64ToText(
-data.content
-);
-
-
-document.getElementById(
-"editModal"
-).classList.remove(
-"hidden"
-);
-
-
-}catch(error){
-
-status(
-error.message,
-"bad"
-);
-
-}
-
-}
-
+/* =====================================================
+   CLOSE EDITOR
+===================================================== */
 
 function closeEditor(){
 
-document.getElementById(
-"editModal"
-).classList.add(
-"hidden"
-);
+    document.getElementById(
+        "editModal"
+    ).classList.add(
+        "hidden"
+    );
 
-editingFile=null;
+
+    editingFile = null;
 
 }
 
 
 document.getElementById(
-"closeEdit"
+    "closeEdit"
 ).onclick =
+    document.getElementById(
+        "cancelEdit"
+    ).onclick =
+    closeEditor;
+
+
+/* =====================================================
+   SAVE EDIT
+===================================================== */
+
 document.getElementById(
-"cancelEdit"
+    "saveEdit"
 ).onclick =
-closeEditor;
+    async event => {
+
+        const button =
+            event.currentTarget;
 
 
-document.getElementById(
-"saveEdit"
-).onclick =
-async ()=>{
+        if(!editingFile){
 
-if(!editingFile){
-return;
-}
+            return;
+
+        }
 
 
-const button =
-document.getElementById(
-"saveEdit"
-);
+        buttonLoading(
+            button
+        );
 
 
-button.disabled=true;
+        try{
 
-button.textContent=
-"Saving...";
+            await github(
+                githubPath(
+                    editingFile.path
+                ),
+                {
+                    method:"PUT",
 
+                    body:{
 
-try{
+                        message:
+                            "Update " +
+                            editingFile.path,
 
-await github(
-githubPath(
-editingFile.path
-),
-{
-method:"PUT",
+                        content:
+                            textToBase64(
+                                document.getElementById(
+                                    "editor"
+                                ).value
+                            ),
 
-body:{
+                        sha:
+                            editingFile.sha,
 
-message:
-"Update "+
-editingFile.path,
+                        branch:
+                            currentRepo
+                                .default_branch
 
-content:
-textToBase64(
-document.getElementById(
-"editor"
-).value
-),
-
-sha:
-editingFile.sha,
-
-branch:
-currentRepo.default_branch
-
-}
-
-}
-);
+                    }
+                }
+            );
 
 
-status(
-"✓ File diupdate.",
-"ok"
-);
+            status(
+                "✓ File diupdate.",
+                "ok"
+            );
 
 
-closeEditor();
+            closeEditor();
 
 
-}catch(error){
+        }catch(error){
 
-status(
-"Update gagal: "+
-error.message,
-"bad"
-);
+            status(
+                "Update gagal: " +
+                error.message,
+                "bad"
+            );
 
-}finally{
+        }finally{
 
-button.disabled=false;
+            buttonLoading(
+                button,
+                false
+            );
 
-button.textContent=
-"Save / Update";
+        }
 
-}
-
-};
+    };
 
 
-/* =====================================
+/* =====================================================
    PREVIEW
-===================================== */
+===================================================== */
 
 async function preview(
-file
+    file,
+    button
 ){
 
-try{
-
-const data =
-await github(
-githubPath(
-file.path
-)
-);
+    buttonLoading(
+        button
+    );
 
 
-const ext =
-file.name
-.split(".")
-.pop()
-.toLowerCase();
+    try{
+
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
 
 
-const body =
+        const ext =
+            file.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+        const body =
+            document.getElementById(
+                "previewContent"
+            );
+
+
+        body.innerHTML =
+            "";
+
+
+        document.getElementById(
+            "previewTitle"
+        ).textContent =
+            file.name;
+
+
+        const base64 =
+            data.content.replace(
+                /\n/g,
+                ""
+            );
+
+
+        if(
+            [
+                "jpg",
+                "jpeg",
+                "png",
+                "gif",
+                "webp"
+            ].includes(ext)
+        ){
+
+            let mime =
+                "image/" +
+                ext;
+
+
+            if(
+                ext ===
+                "jpg" ||
+                ext ===
+                "jpeg"
+            ){
+
+                mime =
+                    "image/jpeg";
+
+            }
+
+
+            body.innerHTML =
+                `
+
+                <img
+                    class="preview-img"
+                    src="data:${mime};base64,${base64}"
+                >
+
+                `;
+
+        }
+
+        else if(
+            [
+                "mp4",
+                "webm",
+                "ogg"
+            ].includes(ext)
+        ){
+
+            let mime =
+                "video/" +
+                ext;
+
+
+            if(
+                ext ===
+                "mp4"
+            ){
+
+                mime =
+                    "video/mp4";
+
+            }
+
+
+            body.innerHTML =
+                `
+
+                <video
+                    class="preview-video"
+                    controls
+                    src="data:${mime};base64,${base64}"
+                ></video>
+
+                `;
+
+        }
+
+        else{
+
+            const text =
+                base64ToText(
+                    base64
+                );
+
+
+            body.innerHTML =
+                `
+
+                <pre
+                    style="
+                        white-space:pre-wrap;
+                        overflow:auto;
+                        max-height:70vh;
+                    "
+                >${escapeHtml(
+                    text
+                )}</pre>
+
+                `;
+
+        }
+
+
+        document.getElementById(
+            "previewModal"
+        ).classList.remove(
+            "hidden"
+        );
+
+
+    }catch(error){
+
+        status(
+            "Preview gagal: " +
+            error.message,
+            "bad"
+        );
+
+    }finally{
+
+        buttonLoading(
+            button,
+            false
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CLOSE PREVIEW
+===================================================== */
+
 document.getElementById(
-"previewContent"
-);
-
-
-body.innerHTML="";
-
-
-document.getElementById(
-"previewTitle"
-).textContent =
-file.name;
-
-
-const base64 =
-data.content.replace(
-/\n/g,
-""
-);
-
-
-if(
-[
-"jpg",
-"jpeg",
-"png",
-"gif",
-"webp"
-].includes(ext)
-){
-
-let mime="image/"+ext;
-
-if(
-ext==="jpg" ||
-ext==="jpeg"
-){
-
-mime="image/jpeg";
-
-}
-
-
-body.innerHTML =
-`
-<img
-class="preview-img"
-src="data:${mime};base64,${base64}"
->
-`;
-
-}
-
-else if(
-[
-"mp4",
-"webm",
-"ogg"
-].includes(ext)
-){
-
-let mime=
-ext==="mp4"
-?"video/mp4"
-:"video/"+ext;
-
-
-body.innerHTML =
-`
-<video
-class="preview-video"
-controls
-src="data:${mime};base64,${base64}"
-></video>
-`;
-
-}
-
-else{
-
-const text =
-base64ToText(
-base64
-);
-
-
-body.innerHTML =
-`
-<pre style="
-white-space:pre-wrap;
-overflow:auto;
-max-height:70vh
-">${escapeHtml(
-text
-)}</pre>
-`;
-
-}
-
-
-document.getElementById(
-"previewModal"
-).classList.remove(
-"hidden"
-);
-
-
-}catch(error){
-
-status(
-"Preview gagal: "+
-error.message,
-"bad"
-);
-
-}
-
-}
-
-
-document.getElementById(
-"closePreview"
+    "closePreview"
 ).onclick =
-()=>{
+    () => {
 
-document.getElementById(
-"previewModal"
-).classList.add(
-"hidden"
-);
+        document.getElementById(
+            "previewModal"
+        ).classList.add(
+            "hidden"
+        );
 
-};
+    };
 
 
-/* =====================================
+/* =====================================================
    DOWNLOAD
-===================================== */
+===================================================== */
 
 async function downloadFile(
-file
+    file,
+    button
 ){
 
-try{
-
-const data =
-await github(
-githubPath(
-file.path
-)
-);
+    buttonLoading(
+        button
+    );
 
 
-const binary =
-atob(
-data.content.replace(
-/\n/g,
-""
-)
-);
+    try{
+
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
 
 
-const bytes =
-new Uint8Array(
-binary.length
-);
+        const binary =
+            atob(
+                data.content.replace(
+                    /\n/g,
+                    ""
+                )
+            );
 
 
-for(
-let i=0;
-i<binary.length;
-i++
-){
+        const bytes =
+            new Uint8Array(
+                binary.length
+            );
 
-bytes[i]=
-binary.charCodeAt(i);
+
+        for(
+            let i = 0;
+            i < binary.length;
+            i++
+        ){
+
+            bytes[i] =
+                binary.charCodeAt(i);
+
+        }
+
+
+        const blob =
+            new Blob(
+                [bytes],
+                {
+                    type:
+                        "application/octet-stream"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const a =
+            document.createElement(
+                "a"
+            );
+
+
+        a.href =
+            url;
+
+
+        a.download =
+            file.name;
+
+
+        document.body.appendChild(
+            a
+        );
+
+
+        a.click();
+
+
+        a.remove();
+
+
+        setTimeout(
+            () => {
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            1000
+        );
+
+
+        status(
+            "✓ Download dimulai.",
+            "ok"
+        );
+
+
+    }catch(error){
+
+        status(
+            "Download gagal: " +
+            error.message,
+            "bad"
+        );
+
+    }finally{
+
+        buttonLoading(
+            button,
+            false
+        );
+
+    }
 
 }
 
 
-const blob =
-new Blob(
-[bytes],
-{
-type:
-"application/octet-stream"
-}
-);
-
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-
-const a =
-document.createElement(
-"a"
-);
-
-
-a.href=url;
-
-a.download=
-file.name;
-
-document.body.appendChild(a);
-
-a.click();
-
-a.remove();
-
-
-setTimeout(
-()=>URL.revokeObjectURL(url),
-1000
-);
-
-
-}catch(error){
-
-status(
-"Download gagal: "+
-error.message,
-"bad"
-);
-
-}
-
-}
-
-
-/* =====================================
+/* =====================================================
    LOGOUT
-===================================== */
+===================================================== */
 
 document.getElementById(
-"logoutButton"
+    "logoutButton"
 ).onclick =
-()=>{
+    event => {
 
-sessionStorage.removeItem(
-"yasam_github_token"
-);
-
-location.reload();
-
-};
+        const button =
+            event.currentTarget;
 
 
-/* =====================================
-   HELPERS
-===================================== */
+        buttonLoading(
+            button
+        );
+
+
+        setTimeout(
+            () => {
+
+                sessionStorage.removeItem(
+                    "yasam_github_token"
+                );
+
+
+                location.reload();
+
+            },
+            250
+        );
+
+    };
+
+
+/* =====================================================
+   BASE64 TEXT
+===================================================== */
 
 function textToBase64(
-text
+    text
 ){
 
-return arrayBufferToBase64(
-new TextEncoder()
-.encode(text)
-.buffer
-);
+    return arrayBufferToBase64(
+        new TextEncoder()
+            .encode(
+                text
+            )
+            .buffer
+    );
 
 }
 
+
+/* =====================================================
+   BASE64 TO TEXT
+===================================================== */
 
 function base64ToText(
-base64
+    base64
 ){
 
-const binary =
-atob(
-base64.replace(
-/\n/g,
-""
-)
-);
+    const binary =
+        atob(
+            base64.replace(
+                /\n/g,
+                ""
+            )
+        );
 
 
-const bytes =
-new Uint8Array(
-binary.length
-);
+    const bytes =
+        new Uint8Array(
+            binary.length
+        );
 
 
-for(
-let i=0;
-i<binary.length;
-i++
-){
+    for(
+        let i = 0;
+        i < binary.length;
+        i++
+    ){
 
-bytes[i]=
-binary.charCodeAt(i);
+        bytes[i] =
+            binary.charCodeAt(i);
+
+    }
+
+
+    return new TextDecoder()
+        .decode(
+            bytes
+        );
 
 }
 
 
-return new TextDecoder()
-.decode(bytes);
-
-}
-
+/* =====================================================
+   ARRAY BUFFER TO BASE64
+===================================================== */
 
 function arrayBufferToBase64(
-buffer
+    buffer
 ){
 
-const bytes =
-new Uint8Array(
-buffer
-);
+    const bytes =
+        new Uint8Array(
+            buffer
+        );
 
 
-let binary="";
+    let binary =
+        "";
 
-const chunk=0x8000;
+
+    const chunk =
+        0x8000;
 
 
-for(
-let i=0;
-i<bytes.length;
-i+=chunk
-){
+    for(
+        let i = 0;
+        i < bytes.length;
+        i += chunk
+    ){
 
-binary +=
-String.fromCharCode(
-...bytes.subarray(
-i,
-Math.min(
-i+chunk,
-bytes.length
-)
-)
-);
+        binary +=
+            String.fromCharCode(
+                ...bytes.subarray(
+                    i,
+                    Math.min(
+                        i + chunk,
+                        bytes.length
+                    )
+                )
+            );
+
+    }
+
+
+    return btoa(
+        binary
+    );
 
 }
 
 
-return btoa(binary);
-
-}
-
+/* =====================================================
+   FORMAT BYTES
+===================================================== */
 
 function formatBytes(
-bytes
+    bytes
 ){
 
-if(!bytes){
-return "0 B";
+    if(!bytes){
+
+        return "0 B";
+
+    }
+
+
+    const units =
+        [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+
+    const index =
+        Math.min(
+            3,
+            Math.floor(
+                Math.log(
+                    bytes
+                ) /
+                Math.log(
+                    1024
+                )
+            )
+        );
+
+
+    return (
+        bytes /
+        Math.pow(
+            1024,
+            index
+        )
+    ).toFixed(
+        index === 0
+        ? 0
+        : 1
+    ) +
+    " " +
+    units[index];
+
 }
 
 
-const units=[
-"B",
-"KB",
-"MB",
-"GB"
-];
-
-
-const index =
-Math.min(
-3,
-Math.floor(
-Math.log(bytes)/
-Math.log(1024)
-)
-);
-
-
-return (
-bytes/
-Math.pow(
-1024,
-index
-)
-).toFixed(
-index===0
-?0
-:1
-)+
-" "+
-units[index];
-
-}
-
+/* =====================================================
+   FILE ICON
+===================================================== */
 
 function fileIcon(
-name
+    name
 ){
 
-const ext =
-name
-.split(".")
-.pop()
-.toLowerCase();
+    const ext =
+        name
+            .split(".")
+            .pop()
+            .toLowerCase();
 
 
-const icons={
+    const icons = {
 
-js:"📜",
-json:"🧾",
-html:"🌐",
-css:"🎨",
-py:"🐍",
-php:"🐘",
-md:"📝",
-txt:"📄",
+        js:"📜",
 
-png:"🖼️",
-jpg:"🖼️",
-jpeg:"🖼️",
-gif:"🖼️",
-webp:"🖼️",
+        json:"🧾",
 
-mp4:"🎬",
-webm:"🎬",
-ogg:"🎬",
+        html:"🌐",
 
-zip:"📦",
-rar:"📦",
-apk:"📦",
+        css:"🎨",
 
-pdf:"📕"
+        py:"🐍",
 
-};
+        php:"🐘",
+
+        md:"📝",
+
+        txt:"📄",
+
+        jpg:"🖼️",
+
+        jpeg:"🖼️",
+
+        png:"🖼️",
+
+        gif:"🖼️",
+
+        webp:"🖼️",
+
+        mp4:"🎬",
+
+        webm:"🎬",
+
+        ogg:"🎬",
+
+        zip:"📦",
+
+        rar:"📦",
+
+        apk:"📦",
+
+        pdf:"📕"
+
+    };
 
 
-return icons[ext]||"📄";
+    return (
+        icons[ext] ||
+        "📄"
+    );
 
 }
 
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(
-value
+    value
 ){
 
-return String(value)
+    return String(
+        value
+    )
 
-.replace(
-/&/g,
-"&amp;"
-)
+    .replace(
+        /&/g,
+        "&amp;"
+    )
 
-.replace(
-/</g,
-"&lt;"
-)
+    .replace(
+        /</g,
+        "&lt;"
+    )
 
-.replace(
-/>/g,
-"&gt;"
-)
+    .replace(
+        />/g,
+        "&gt;"
+    )
 
-.replace(
-/"/g,
-"&quot;"
-)
+    .replace(
+        /"/g,
+        "&quot;"
+    )
 
-.replace(
-/'/g,
-"&#039;"
-);
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
 
 
-/* =====================================
+/* =====================================================
    STATUS
-===================================== */
+===================================================== */
 
 let statusTimer;
 
 
 function status(
-message,
-type=""
+    message,
+    type = ""
 ){
 
-clearTimeout(
-statusTimer
-);
+    clearTimeout(
+        statusTimer
+    );
 
 
-statusBox.textContent =
-message;
+    statusBox.textContent =
+        message;
 
 
-statusBox.className =
-"status "+type;
+    statusBox.className =
+        "status " +
+        type;
 
 
-statusTimer =
-setTimeout(
-()=>{
+    statusTimer =
+        setTimeout(
+            () => {
 
-statusBox.classList.add(
-"hidden"
-);
+                statusBox.classList.add(
+                    "hidden"
+                );
 
-},
-3500
-);
+            },
+            3500
+        );
 
 }
 
