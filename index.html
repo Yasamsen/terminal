@@ -2875,148 +2875,165 @@ async function getFileData(
 PREVIEW
 ===================================================== */
 
-async function previewFile(
-    file
-){
+async function previewFile(file){
 
-    $("previewTitle")
-        .textContent =
-        "👁️ " +
-        file.path;
+    $("previewTitle").textContent =
+        "👁️ " + file.path;
 
-
-    $("previewContent").innerHTML =
-        `
+    $("previewContent").innerHTML = `
         <div class="empty">
             ... Loading preview
         </div>
-        `;
-
+    `;
 
     $("previewModal")
         .classList
         .remove("hidden");
 
+    const rawUrl =
+        `https://raw.githubusercontent.com/` +
+        `${encodeURIComponent(githubUser.login)}/` +
+        `${encodeURIComponent(selectedRepo.name)}/` +
+        `${encodeURIComponent(selectedRepo.default_branch)}/` +
+        file.path
+            .split("/")
+            .map(encodeURIComponent)
+            .join("/");
+
+    const ext =
+        file.path
+            .split(".")
+            .pop()
+            .toLowerCase();
 
     try{
 
-        const ext =
-            file.path
-                .split(".")
-                .pop()
-                .toLowerCase();
+        /* IMAGE */
 
+        if([
+            "jpg",
+            "jpeg",
+            "png",
+            "gif",
+            "webp",
+            "bmp",
+            "svg"
+        ].includes(ext)){
 
-        if(
-            [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "webp",
-                "bmp",
-                "svg"
-            ].includes(ext)
-        ){
-
-            const data =
-                await getFileData(
-                    file.path
-                );
-
-
-            $("previewContent").innerHTML =
-                `
+            $("previewContent").innerHTML = `
                 <img
                     class="preview-image"
-                    src="data:image/*;base64,${data.content.replace(/\n/g,"")}"
+                    src="${rawUrl}"
                     alt="${esc(file.path)}"
+                    loading="eager"
                 >
-                `;
+            `;
 
             return;
-
         }
 
 
-        if(
-            [
-                "mp4",
-                "webm",
-                "mov"
-            ].includes(ext)
-        ){
+        /* VIDEO */
 
-            /*
-             * Raw GitHub URL digunakan untuk
-             * preview media.
-             */
+        if([
+            "mp4",
+            "webm",
+            "ogg",
+            "mov"
+        ].includes(ext)){
 
-            const url =
-                `https://raw.githubusercontent.com/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(selectedRepo.name)}/${encodeURIComponent(selectedRepo.default_branch)}/${file.path.split("/").map(encodeURIComponent).join("/")}`;
-
-
-            $("previewContent").innerHTML =
-                `
+            $("previewContent").innerHTML = `
                 <video
                     class="preview-video"
                     controls
                     playsinline
-                    src="${url}"
+                    preload="metadata"
+                    src="${rawUrl}"
                 ></video>
-                `;
-
-            return;
-
-        }
-
-
-        if(
-            isTextFile(
-                file.path
-            )
-        ){
-
-            const data =
-                await getFileData(
-                    file.path
-                );
-
-
-            const text =
-                decodeBase64(
-                    data.content
-                );
-
-
-            $("previewContent").innerHTML =
-                `
-                <pre class="preview-text">${esc(text)}</pre>
-                `;
-
-            return;
-
-        }
-
-
-        $("previewContent").innerHTML =
-            `
-            <div class="empty">
-                Preview untuk tipe file ini belum tersedia.
-                <br><br>
-                Gunakan tombol Download.
-            </div>
             `;
 
+            return;
+        }
+
+
+        /* AUDIO */
+
+        if([
+            "mp3",
+            "wav",
+            "ogg",
+            "m4a"
+        ].includes(ext)){
+
+            $("previewContent").innerHTML = `
+                <div style="padding:20px">
+
+                    <div style="
+                        color:#00ff66;
+                        margin-bottom:15px;
+                    ">
+                        🎵 ${esc(file.path)}
+                    </div>
+
+                    <audio
+                        controls
+                        style="width:100%"
+                        src="${rawUrl}"
+                    ></audio>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* TEXT */
+
+        if(isTextFile(file.path)){
+
+            const response =
+                await fetch(rawUrl);
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Gagal mengambil file."
+                );
+
+            }
+
+            const text =
+                await response.text();
+
+            $("previewContent").innerHTML = `
+                <pre class="preview-text">${esc(text)}</pre>
+            `;
+
+            return;
+        }
+
+
+        $("previewContent").innerHTML = `
+            <div class="empty">
+
+                📄 File ini belum memiliki
+                preview langsung.
+
+                <br><br>
+
+                Gunakan tombol Download.
+
+            </div>
+        `;
 
     }catch(error){
 
-        $("previewContent").innerHTML =
-            `
+        $("previewContent").innerHTML = `
             <div class="empty error">
                 ${esc(error.message)}
             </div>
-            `;
+        `;
 
     }
 
