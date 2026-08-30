@@ -1,0 +1,3030 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yasam GitHub Manager</title>
+
+<style>
+*{box-sizing:border-box}
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#050505;
+    color:#ddd;
+    font-family:Consolas,Monaco,"Courier New",monospace
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+#login{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px
+}
+
+.card{
+    width:100%;
+    max-width:430px;
+    background:#0b0b0b;
+    border:1px solid #292929;
+    border-radius:12px;
+    padding:25px
+}
+
+.logo{
+    color:#00ff66;
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:6px
+}
+
+.muted{
+    color:#777;
+    font-size:12px;
+    line-height:1.6
+}
+
+label{
+    display:block;
+    color:#aaa;
+    font-size:12px;
+    margin:15px 0 7px
+}
+
+input,select{
+    width:100%;
+    padding:11px;
+    background:#111;
+    color:#eee;
+    border:1px solid #303030;
+    border-radius:8px;
+    outline:none
+}
+
+input:focus,select:focus{
+    border-color:#00c853
+}
+
+.primary{
+    width:100%;
+    padding:12px;
+    border:0;
+    border-radius:8px;
+    background:#00a844;
+    color:white;
+    font-weight:bold;
+    margin-top:8px
+}
+
+.primary:hover{
+    background:#00c853
+}
+
+#error{
+    color:#ff5555;
+    font-size:12px;
+    margin-top:10px
+}
+
+/* APP */
+
+#app{
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column
+}
+
+.header{
+    min-height:58px;
+    background:#090909;
+    border-bottom:1px solid #222;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    flex-wrap:wrap
+}
+
+.brand{
+    color:#00ff66;
+    font-weight:bold;
+    margin-right:auto
+}
+
+.repo-select{
+    width:250px;
+    margin:0
+}
+
+.btn{
+    background:#151515;
+    color:#ddd;
+    border:1px solid #303030;
+    border-radius:7px;
+    padding:8px 10px
+}
+
+.btn:hover{
+    background:#222
+}
+
+.green{
+    color:#00ff66;
+    border-color:#075c2d
+}
+
+.red{
+    color:#ff6666
+}
+
+.body{
+    display:flex;
+    flex:1;
+    min-height:0
+}
+
+.sidebar{
+    width:240px;
+    flex-shrink:0;
+    background:#080808;
+    border-right:1px solid #222;
+    padding:12px;
+    overflow:auto
+}
+
+.side-title{
+    color:#666;
+    font-size:10px;
+    margin:5px 0 8px
+}
+
+.user{
+    background:#0d0d0d;
+    border:1px solid #222;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:15px
+}
+
+.user b{
+    color:#00ff66
+}
+
+.main{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column
+}
+
+.toolbar{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:8px;
+    border-bottom:1px solid #222;
+    background:#090909
+}
+
+.path{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#aaa
+}
+
+.path b{
+    color:#00ff66
+}
+
+.file-list{
+    flex:1;
+    overflow:auto;
+    padding:7px
+}
+
+.row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 8px;
+    border-bottom:1px solid #171717
+}
+
+.row:hover{
+    background:#101010
+}
+
+.icon{
+    width:25px;
+    text-align:center
+}
+
+.name{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap
+}
+
+.folder{
+    color:#55aaff;
+    cursor:pointer
+}
+
+.meta{
+    width:75px;
+    text-align:right;
+    color:#666;
+    font-size:11px
+}
+
+.actions{
+    display:flex;
+    gap:5px
+}
+
+.empty,
+.loading{
+    text-align:center;
+    padding:50px 15px;
+    color:#666
+}
+
+/* STATUS */
+
+.status{
+    position:fixed;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#111;
+    border:1px solid #333;
+    border-radius:8px;
+    padding:10px 14px;
+    z-index:500;
+    font-size:12px;
+    max-width:90%
+}
+
+.status.ok{
+    color:#00ff66
+}
+
+.status.bad{
+    color:#ff5555
+}
+
+/* MODAL */
+
+.modal-bg{
+    position:fixed;
+    inset:0;
+    background:#000c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:1000
+}
+
+.modal{
+    width:100%;
+    max-width:750px;
+    max-height:92vh;
+    overflow:auto;
+    background:#0b0b0b;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:15px
+}
+
+.modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px
+}
+
+.modal-title{
+    color:#00ff66
+}
+
+textarea{
+    width:100%;
+    min-height:400px;
+    resize:vertical;
+    background:#050505;
+    color:#ddd;
+    border:1px solid #292929;
+    border-radius:7px;
+    padding:12px;
+    outline:none
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:7px;
+    margin-top:10px
+}
+
+.preview-img{
+    max-width:100%;
+    max-height:70vh;
+    display:block;
+    margin:auto;
+    border-radius:7px
+}
+
+.preview-video{
+    width:100%;
+    max-height:70vh;
+    display:block
+}
+
+.upload-item{
+    padding:8px 0;
+    border-bottom:1px solid #222
+}
+
+.progress{
+    height:5px;
+    background:#222;
+    border-radius:5px;
+    overflow:hidden;
+    margin-top:7px
+}
+
+.progress-bar{
+    height:100%;
+    width:0;
+    background:#00c853
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .sidebar{
+        display:none
+    }
+
+    .header{
+        padding:8px
+    }
+
+    .repo-select{
+        width:220px
+    }
+
+    .meta{
+        display:none
+    }
+
+    .actions .btn{
+        padding:7px;
+        font-size:10px
+    }
+
+    .toolbar{
+        overflow:auto
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="login">
+
+    <div class="card">
+
+        <div class="logo">
+            &gt; YasamGit Manager_
+        </div>
+
+        <div class="muted">
+            GitHub repository file manager
+        </div>
+
+        <label>
+            GitHub Fine-grained Personal Access Token
+        </label>
+
+        <input
+            id="tokenInput"
+            type="password"
+            placeholder="github_pat_..."
+            autocomplete="off"
+        >
+
+        <button
+            id="loginButton"
+            class="primary"
+        >
+            CONNECT GITHUB
+        </button>
+
+        <div id="error"></div>
+
+        <p class="muted">
+            Token hanya disimpan di sessionStorage
+            browser dan tidak ditulis ke source code.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- APP -->
+
+<div id="app" class="hidden">
+
+    <header class="header">
+
+        <div class="brand">
+            &gt; YasamGit_
+        </div>
+
+        <select
+            id="repoSelect"
+            class="repo-select"
+        >
+            <option value="">
+                Pilih repository...
+            </option>
+        </select>
+
+        <button
+            class="btn"
+            id="refreshButton"
+        >
+            ↻
+        </button>
+
+        <button
+            class="btn red"
+            id="logoutButton"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+    <div class="body">
+
+        <aside class="sidebar">
+
+            <div class="side-title">
+                ACCOUNT
+            </div>
+
+            <div class="user">
+
+                <b id="username">
+                    -
+                </b>
+
+                <div
+                    id="repoCount"
+                    class="muted"
+                >
+                    -
+                </div>
+
+            </div>
+
+            <div class="side-title">
+                REPOSITORY
+            </div>
+
+            <select id="repoSelectSide">
+
+                <option value="">
+                    Pilih repository...
+                </option>
+
+            </select>
+
+        </aside>
+
+
+        <main class="main">
+
+            <div class="toolbar">
+
+                <button
+                    class="btn"
+                    id="backButton"
+                >
+                    ←
+                </button>
+
+                <button
+                    class="btn"
+                    id="homeButton"
+                >
+                    ⌂
+                </button>
+
+                <div
+                    id="path"
+                    class="path"
+                >
+                    <b>/</b>
+                </div>
+
+                <button
+                    class="btn green"
+                    id="uploadButton"
+                >
+                    + Upload
+                </button>
+
+                <button
+                    class="btn"
+                    id="folderButton"
+                >
+                    + Folder
+                </button>
+
+                <input
+                    id="fileInput"
+                    type="file"
+                    multiple
+                    class="hidden"
+                >
+
+            </div>
+
+
+            <div
+                id="fileList"
+                class="file-list"
+            >
+
+                <div class="empty">
+                    Pilih repository.
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- UPLOAD MODAL -->
+
+<div
+    id="uploadModal"
+    class="modal-bg hidden"
+>
+
+    <div class="modal">
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+                Upload Files
+            </div>
+
+            <button
+                class="btn"
+                id="closeUpload"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <input
+            id="uploadInput"
+            type="file"
+            multiple
+        >
+
+        <div
+            id="uploadQueue"
+        ></div>
+
+        <div class="modal-actions">
+
+            <button
+                class="btn"
+                id="cancelUpload"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn green"
+                id="startUpload"
+            >
+                Upload
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- EDIT MODAL -->
+
+<div
+    id="editModal"
+    class="modal-bg hidden"
+>
+
+    <div class="modal">
+
+        <div class="modal-head">
+
+            <div
+                id="editTitle"
+                class="modal-title"
+            >
+                Edit
+            </div>
+
+            <button
+                class="btn"
+                id="closeEdit"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <textarea
+            id="editor"
+        ></textarea>
+
+        <div class="modal-actions">
+
+            <button
+                class="btn"
+                id="cancelEdit"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn green"
+                id="saveEdit"
+            >
+                Save / Update
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PREVIEW -->
+
+<div
+    id="previewModal"
+    class="modal-bg hidden"
+>
+
+    <div class="modal">
+
+        <div class="modal-head">
+
+            <div
+                id="previewTitle"
+                class="modal-title"
+            >
+                Preview
+            </div>
+
+            <button
+                class="btn"
+                id="closePreview"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <div id="previewContent"></div>
+
+    </div>
+
+</div>
+
+
+<div
+    id="status"
+    class="status hidden"
+></div>
+
+
+<script>
+
+const API =
+    "https://api.github.com";
+
+let token =
+    sessionStorage.getItem(
+        "yasam_github_token"
+    );
+
+let repositories = [];
+
+let currentRepo = null;
+
+let currentPath = "";
+
+let editingFile = null;
+
+
+/* ================================
+   ELEMENT
+================================ */
+
+const loginPage =
+    document.getElementById("login");
+
+const app =
+    document.getElementById("app");
+
+const tokenInput =
+    document.getElementById("tokenInput");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const errorBox =
+    document.getElementById("error");
+
+const repoSelect =
+    document.getElementById("repoSelect");
+
+const repoSelectSide =
+    document.getElementById(
+        "repoSelectSide"
+    );
+
+const fileList =
+    document.getElementById("fileList");
+
+const pathBox =
+    document.getElementById("path");
+
+const statusBox =
+    document.getElementById("status");
+
+
+/* ================================
+   API
+================================ */
+
+async function github(
+    endpoint,
+    options = {}
+){
+
+    const response =
+        await fetch(
+            API + endpoint,
+            {
+                method:
+                    options.method || "GET",
+
+                headers:{
+
+                    "Accept":
+                        "application/vnd.github+json",
+
+                    "Authorization":
+                        "Bearer " + (
+                            options.token || token
+                        ),
+
+                    "X-GitHub-Api-Version":
+                        "2022-11-28",
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body:
+                    options.body
+                        ? JSON.stringify(
+                            options.body
+                        )
+                        : undefined
+            }
+        );
+
+
+    let data = {};
+
+    try{
+
+        data =
+            await response.json();
+
+    }catch{}
+
+
+    if(!response.ok){
+
+        throw new Error(
+            data.message ||
+            "GitHub API Error " +
+            response.status
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* ================================
+   LOGIN
+================================ */
+
+loginButton.onclick =
+    login;
+
+
+tokenInput.addEventListener(
+    "keydown",
+    e => {
+
+        if(e.key === "Enter"){
+            login();
+        }
+
+    }
+);
+
+
+async function login(){
+
+    const value =
+        tokenInput.value.trim();
+
+
+    if(!value){
+
+        errorBox.textContent =
+            "Token wajib diisi.";
+
+        return;
+
+    }
+
+
+    loginButton.disabled =
+        true;
+
+    loginButton.textContent =
+        "CONNECTING...";
+
+    errorBox.textContent = "";
+
+
+    try{
+
+        const user =
+            await github(
+                "/user",
+                {
+                    token:value
+                }
+            );
+
+
+        token = value;
+
+        sessionStorage.setItem(
+            "yasam_github_token",
+            token
+        );
+
+
+        loginPage.classList.add(
+            "hidden"
+        );
+
+        app.classList.remove(
+            "hidden"
+        );
+
+
+        document.getElementById(
+            "username"
+        ).textContent =
+            user.login;
+
+
+        await loadRepositories();
+
+
+    }catch(error){
+
+        errorBox.textContent =
+            error.message;
+
+    }finally{
+
+        loginButton.disabled =
+            false;
+
+        loginButton.textContent =
+            "CONNECT GITHUB";
+
+    }
+
+}
+
+
+/* ================================
+   AUTO LOGIN
+================================ */
+
+if(token){
+
+    autoLogin();
+
+}
+
+
+async function autoLogin(){
+
+    try{
+
+        const user =
+            await github("/user");
+
+
+        loginPage.classList.add(
+            "hidden"
+        );
+
+        app.classList.remove(
+            "hidden"
+        );
+
+
+        document.getElementById(
+            "username"
+        ).textContent =
+            user.login;
+
+
+        await loadRepositories();
+
+
+    }catch{
+
+        sessionStorage.removeItem(
+            "yasam_github_token"
+        );
+
+        token = null;
+
+    }
+
+}
+
+
+/* ================================
+   REPOSITORIES
+================================ */
+
+async function loadRepositories(){
+
+    repositories = [];
+
+
+    for(
+        let page = 1;
+        page <= 10;
+        page++
+    ){
+
+        const data =
+            await github(
+                `/user/repos?per_page=100&page=${page}&sort=updated`
+            );
+
+
+        repositories.push(
+            ...data
+        );
+
+
+        if(data.length < 100){
+            break;
+        }
+
+    }
+
+
+    repoSelect.innerHTML =
+        `<option value="">
+            Pilih repository...
+         </option>`;
+
+
+    repoSelectSide.innerHTML =
+        `<option value="">
+            Pilih repository...
+         </option>`;
+
+
+    repositories.forEach(
+        repo => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                repo.full_name;
+
+            option.textContent =
+                repo.name +
+                (
+                    repo.private
+                        ? " 🔒"
+                        : ""
+                );
+
+
+            repoSelect.appendChild(
+                option
+            );
+
+
+            repoSelectSide.appendChild(
+                option.cloneNode(true)
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "repoCount"
+    ).textContent =
+        repositories.length +
+        " repository";
+
+}
+
+
+/* ================================
+   SELECT REPOSITORY
+================================ */
+
+repoSelect.onchange =
+    () => {
+
+        repoSelectSide.value =
+            repoSelect.value;
+
+        selectRepository(
+            repoSelect.value
+        );
+
+    };
+
+
+repoSelectSide.onchange =
+    () => {
+
+        repoSelect.value =
+            repoSelectSide.value;
+
+        selectRepository(
+            repoSelectSide.value
+        );
+
+    };
+
+
+async function selectRepository(
+    fullName
+){
+
+    if(!fullName){
+
+        currentRepo = null;
+
+        fileList.innerHTML =
+            `<div class="empty">
+                Pilih repository.
+             </div>`;
+
+        return;
+
+    }
+
+
+    currentRepo =
+        repositories.find(
+            repo =>
+                repo.full_name ===
+                fullName
+        );
+
+
+    currentPath = "";
+
+    await loadFiles();
+
+}
+
+
+/* ================================
+   FILE PATH
+================================ */
+
+function githubPath(
+    path = ""
+){
+
+    const owner =
+        encodeURIComponent(
+            currentRepo.owner.login
+        );
+
+    const repo =
+        encodeURIComponent(
+            currentRepo.name
+        );
+
+
+    const encoded =
+        path
+            .split("/")
+            .filter(Boolean)
+            .map(
+                encodeURIComponent
+            )
+            .join("/");
+
+
+    return (
+        `/repos/${owner}/${repo}/contents/` +
+        encoded
+    );
+
+}
+
+
+function joinPath(...parts){
+
+    return parts
+        .filter(Boolean)
+        .join("/")
+        .replace(
+            /\/+/g,
+            "/"
+        )
+        .replace(
+            /^\//,
+            ""
+        );
+
+}
+
+
+/* ================================
+   LOAD FILES
+================================ */
+
+async function loadFiles(){
+
+    if(!currentRepo){
+        return;
+    }
+
+
+    fileList.innerHTML =
+        `<div class="loading">
+            Loading...
+         </div>`;
+
+
+    updatePath();
+
+
+    try{
+
+        let data =
+            await github(
+                githubPath(
+                    currentPath
+                ) +
+                "?ref=" +
+                encodeURIComponent(
+                    currentRepo.default_branch
+                )
+            );
+
+
+        if(!Array.isArray(data)){
+            data = [data];
+        }
+
+
+        data.sort(
+            (a,b) => {
+
+                if(
+                    a.type ===
+                    b.type
+                ){
+
+                    return a.name.localeCompare(
+                        b.name
+                    );
+
+                }
+
+                return a.type === "dir"
+                    ? -1
+                    : 1;
+
+            }
+        );
+
+
+        renderFiles(data);
+
+
+    }catch(error){
+
+        fileList.innerHTML =
+            `<div class="empty">
+                ${escapeHtml(
+                    error.message
+                )}
+             </div>`;
+
+    }
+
+}
+
+
+/* ================================
+   RENDER
+================================ */
+
+function renderFiles(files){
+
+    fileList.innerHTML = "";
+
+
+    if(currentPath){
+
+        const back =
+            document.createElement(
+                "div"
+            );
+
+
+        back.className =
+            "row";
+
+
+        back.innerHTML = `
+            <div class="icon">↩</div>
+            <div class="name folder">
+                ..
+            </div>
+        `;
+
+
+        back.onclick =
+            goBack;
+
+
+        fileList.appendChild(
+            back
+        );
+
+    }
+
+
+    if(!files.length){
+
+        fileList.innerHTML +=
+            `<div class="empty">
+                Folder kosong.
+             </div>`;
+
+        return;
+
+    }
+
+
+    files.forEach(
+        file => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "row";
+
+
+            const folder =
+                file.type === "dir";
+
+
+            row.innerHTML = `
+
+                <div class="icon">
+                    ${
+                        folder
+                            ? "📁"
+                            : fileIcon(
+                                file.name
+                            )
+                    }
+                </div>
+
+                <div class="name ${
+                    folder
+                        ? "folder"
+                        : ""
+                }">
+                    ${escapeHtml(
+                        file.name
+                    )}
+                </div>
+
+                <div class="meta">
+                    ${
+                        folder
+                            ? "-"
+                            : formatBytes(
+                                file.size || 0
+                            )
+                    }
+                </div>
+
+                <div class="actions">
+
+                    ${
+                        !folder
+                            ? `
+                            <button
+                                class="btn view"
+                            >
+                                View
+                            </button>
+
+                            <button
+                                class="btn edit"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                class="btn download"
+                            >
+                                ↓
+                            </button>
+                            `
+                            : ""
+                    }
+
+                    <button
+                        class="btn rename"
+                    >
+                        Rename
+                    </button>
+
+                    <button
+                        class="btn red delete"
+                    >
+                        ×
+                    </button>
+
+                </div>
+            `;
+
+
+            if(folder){
+
+                row.querySelector(
+                    ".name"
+                ).onclick =
+                    () => {
+
+                        currentPath =
+                            joinPath(
+                                currentPath,
+                                file.name
+                            );
+
+                        loadFiles();
+
+                    };
+
+            }else{
+
+                row.querySelector(
+                    ".view"
+                ).onclick =
+                    () => preview(file);
+
+
+                row.querySelector(
+                    ".edit"
+                ).onclick =
+                    () => editFile(file);
+
+
+                row.querySelector(
+                    ".download"
+                ).onclick =
+                    () => downloadFile(file);
+
+            }
+
+
+            row.querySelector(
+                ".rename"
+            ).onclick =
+                () => renameFile(file);
+
+
+            row.querySelector(
+                ".delete"
+            ).onclick =
+                () => deleteFile(file);
+
+
+            fileList.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* ================================
+   NAVIGATION
+================================ */
+
+function updatePath(){
+
+    pathBox.innerHTML =
+        "<b>/</b> " +
+        escapeHtml(
+            currentPath
+        );
+
+}
+
+
+function goBack(){
+
+    if(!currentPath){
+        return;
+    }
+
+
+    const parts =
+        currentPath
+            .split("/")
+            .filter(Boolean);
+
+
+    parts.pop();
+
+
+    currentPath =
+        parts.join("/");
+
+
+    loadFiles();
+
+}
+
+
+document.getElementById(
+    "backButton"
+).onclick =
+    goBack;
+
+
+document.getElementById(
+    "homeButton"
+).onclick =
+    () => {
+
+        currentPath = "";
+
+        loadFiles();
+
+    };
+
+
+document.getElementById(
+    "refreshButton"
+).onclick =
+    () => {
+
+        if(currentRepo){
+            loadFiles();
+        }
+
+    };
+
+
+/* ================================
+   UPLOAD
+================================ */
+
+const uploadModal =
+    document.getElementById(
+        "uploadModal"
+    );
+
+const uploadInput =
+    document.getElementById(
+        "uploadInput"
+    );
+
+const uploadQueue =
+    document.getElementById(
+        "uploadQueue"
+    );
+
+
+document.getElementById(
+    "uploadButton"
+).onclick =
+    () => {
+
+        if(!currentRepo){
+
+            status(
+                "Pilih repository terlebih dahulu.",
+                "bad"
+            );
+
+            return;
+
+        }
+
+
+        uploadInput.value = "";
+
+        uploadQueue.innerHTML = "";
+
+        uploadModal.classList.remove(
+            "hidden"
+        );
+
+    };
+
+
+document.getElementById(
+    "closeUpload"
+).onclick =
+document.getElementById(
+    "cancelUpload"
+).onclick =
+    () => {
+
+        uploadModal.classList.add(
+            "hidden"
+        );
+
+    };
+
+
+uploadInput.onchange =
+    () => {
+
+        uploadQueue.innerHTML = "";
+
+
+        [...uploadInput.files]
+            .forEach(
+                (file,index) => {
+
+                    uploadQueue.innerHTML += `
+
+                        <div class="upload-item">
+
+                            <b>
+                                ${escapeHtml(
+                                    file.name
+                                )}
+                            </b>
+
+                            <span class="muted">
+                                ${formatBytes(
+                                    file.size
+                                )}
+                            </span>
+
+                            <div class="progress">
+
+                                <div
+                                    id="progress${index}"
+                                    class="progress-bar"
+                                ></div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            );
+
+    };
+
+
+document.getElementById(
+    "startUpload"
+).onclick =
+    async () => {
+
+        const files =
+            [...uploadInput.files];
+
+
+        if(!files.length){
+
+            status(
+                "Pilih file terlebih dahulu.",
+                "bad"
+            );
+
+            return;
+
+        }
+
+
+        for(
+            let i = 0;
+            i < files.length;
+            i++
+        ){
+
+            await uploadFile(
+                files[i],
+                i
+            );
+
+        }
+
+
+        await loadFiles();
+
+        uploadModal.classList.add(
+            "hidden"
+        );
+
+    };
+
+
+async function uploadFile(
+    file,
+    index
+){
+
+    try{
+
+        status(
+            "Upload " +
+            file.name +
+            "..."
+        );
+
+
+        const buffer =
+            await file.arrayBuffer();
+
+
+        const base64 =
+            arrayBufferToBase64(
+                buffer
+            );
+
+
+        const target =
+            joinPath(
+                currentPath,
+                file.name
+            );
+
+
+        let existing = null;
+
+
+        /*
+         * Cek file apakah sudah ada.
+         */
+
+        try{
+
+            existing =
+                await github(
+                    githubPath(target) +
+                    "?ref=" +
+                    encodeURIComponent(
+                        currentRepo.default_branch
+                    )
+                );
+
+        }catch(error){
+
+            /*
+             * 404 = file belum ada.
+             */
+
+            if(
+                !(
+                    error.message.includes(
+                        "Not Found"
+                    ) ||
+                    error.message.includes(
+                        "404"
+                    )
+                )
+            ){
+
+                throw error;
+
+            }
+
+        }
+
+
+        const body = {
+
+            message:
+                existing
+                    ? "Update " + target
+                    : "Upload " + target,
+
+            content:
+                base64,
+
+            branch:
+                currentRepo.default_branch
+
+        };
+
+
+        /*
+         * SHA diperlukan untuk overwrite.
+         */
+
+        if(
+            existing &&
+            existing.sha
+        ){
+
+            body.sha =
+                existing.sha;
+
+        }
+
+
+        await github(
+            githubPath(target),
+            {
+                method:"PUT",
+                body
+            }
+        );
+
+
+        const bar =
+            document.getElementById(
+                "progress" +
+                index
+            );
+
+
+        if(bar){
+            bar.style.width =
+                "100%";
+        }
+
+
+        status(
+            existing
+                ? file.name +
+                  " berhasil ditimpa."
+                : file.name +
+                  " berhasil diupload.",
+            "ok"
+        );
+
+
+    }catch(error){
+
+        status(
+            file.name +
+            ": " +
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+/* ================================
+   CREATE FOLDER
+================================ */
+
+document.getElementById(
+    "folderButton"
+).onclick =
+    async () => {
+
+        if(!currentRepo){
+
+            status(
+                "Pilih repository.",
+                "bad"
+            );
+
+            return;
+
+        }
+
+
+        const name =
+            prompt(
+                "Nama folder:"
+            );
+
+
+        if(!name){
+            return;
+        }
+
+
+        if(
+            name.includes("/") ||
+            name.includes("\\")
+        ){
+
+            status(
+                "Nama folder tidak valid.",
+                "bad"
+            );
+
+            return;
+
+        }
+
+
+        try{
+
+            const target =
+                joinPath(
+                    currentPath,
+                    name,
+                    ".gitkeep"
+                );
+
+
+            await github(
+                githubPath(target),
+                {
+                    method:"PUT",
+
+                    body:{
+
+                        message:
+                            "Create folder " +
+                            name,
+
+                        content:
+                            arrayBufferToBase64(
+                                new TextEncoder()
+                                    .encode(
+                                        ""
+                                    )
+                                    .buffer
+                            ),
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+                }
+            );
+
+
+            status(
+                "Folder berhasil dibuat.",
+                "ok"
+            );
+
+
+            loadFiles();
+
+
+        }catch(error){
+
+            status(
+                error.message,
+                "bad"
+            );
+
+        }
+
+    };
+
+
+/* ================================
+   RENAME
+================================ */
+
+async function renameFile(file){
+
+    const newName =
+        prompt(
+            "Nama baru:",
+            file.name
+        );
+
+
+    if(
+        !newName ||
+        newName === file.name
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        newName.includes("/") ||
+        newName.includes("\\")
+    ){
+
+        status(
+            "Nama tidak valid.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+
+    const oldPath =
+        file.path;
+
+
+    const newPath =
+        joinPath(
+            currentPath,
+            newName
+        );
+
+
+    try{
+
+        /*
+         * Folder
+         */
+
+        if(file.type === "dir"){
+
+            await copyFolder(
+                oldPath,
+                newPath
+            );
+
+
+            await deleteFolder(
+                oldPath
+            );
+
+        }
+
+        /*
+         * File
+         */
+
+        else{
+
+            const data =
+                await github(
+                    githubPath(
+                        oldPath
+                    )
+                );
+
+
+            let target = null;
+
+
+            try{
+
+                target =
+                    await github(
+                        githubPath(
+                            newPath
+                        )
+                    );
+
+            }catch{}
+
+
+            const body = {
+
+                message:
+                    `Rename ${oldPath} to ${newPath}`,
+
+                content:
+                    data.content.replace(
+                        /\n/g,
+                        ""
+                    ),
+
+                branch:
+                    currentRepo.default_branch
+
+            };
+
+
+            if(target?.sha){
+
+                body.sha =
+                    target.sha;
+
+            }
+
+
+            await github(
+                githubPath(
+                    newPath
+                ),
+                {
+                    method:"PUT",
+                    body
+                }
+            );
+
+
+            await github(
+                githubPath(
+                    oldPath
+                ),
+                {
+                    method:"DELETE",
+
+                    body:{
+
+                        message:
+                            "Delete old " +
+                            oldPath,
+
+                        sha:
+                            file.sha,
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        status(
+            "Berhasil di-rename.",
+            "ok"
+        );
+
+
+        loadFiles();
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+async function copyFolder(
+    source,
+    target
+){
+
+    const files =
+        await github(
+            githubPath(source)
+        );
+
+
+    for(
+        const file of files
+    ){
+
+        const newPath =
+            joinPath(
+                target,
+                file.name
+            );
+
+
+        if(file.type === "dir"){
+
+            await copyFolder(
+                file.path,
+                newPath
+            );
+
+        }else{
+
+            const data =
+                await github(
+                    githubPath(
+                        file.path
+                    )
+                );
+
+
+            await github(
+                githubPath(
+                    newPath
+                ),
+                {
+                    method:"PUT",
+
+                    body:{
+
+                        message:
+                            "Rename folder",
+
+                        content:
+                            data.content.replace(
+                                /\n/g,
+                                ""
+                            ),
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+async function deleteFolder(
+    folder
+){
+
+    const files =
+        await github(
+            githubPath(folder)
+        );
+
+
+    for(
+        const file of files
+    ){
+
+        if(file.type === "dir"){
+
+            await deleteFolder(
+                file.path
+            );
+
+        }else{
+
+            await github(
+                githubPath(
+                    file.path
+                ),
+                {
+                    method:"DELETE",
+
+                    body:{
+
+                        message:
+                            "Delete " +
+                            file.path,
+
+                        sha:
+                            file.sha,
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+/* ================================
+   DELETE
+================================ */
+
+async function deleteFile(file){
+
+    if(
+        !confirm(
+            `Hapus "${file.name}"?`
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        if(file.type === "dir"){
+
+            await deleteFolder(
+                file.path
+            );
+
+        }else{
+
+            await github(
+                githubPath(
+                    file.path
+                ),
+                {
+                    method:"DELETE",
+
+                    body:{
+
+                        message:
+                            "Delete " +
+                            file.path,
+
+                        sha:
+                            file.sha,
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        status(
+            "Berhasil dihapus.",
+            "ok"
+        );
+
+
+        loadFiles();
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+/* ================================
+   EDIT TEXT
+================================ */
+
+async function editFile(file){
+
+    try{
+
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
+
+
+        if(
+            data.encoding !==
+            "base64"
+        ){
+
+            throw new Error(
+                "File tidak bisa diedit."
+            );
+
+        }
+
+
+        editingFile =
+            data;
+
+
+        document.getElementById(
+            "editTitle"
+        ).textContent =
+            data.path;
+
+
+        document.getElementById(
+            "editor"
+        ).value =
+            base64ToText(
+                data.content
+            );
+
+
+        document.getElementById(
+            "editModal"
+        ).classList.remove(
+            "hidden"
+        );
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+function closeEditor(){
+
+    document.getElementById(
+        "editModal"
+    ).classList.add(
+        "hidden"
+    );
+
+    editingFile = null;
+
+}
+
+
+document.getElementById(
+    "closeEdit"
+).onclick =
+document.getElementById(
+    "cancelEdit"
+).onclick =
+    closeEditor;
+
+
+document.getElementById(
+    "saveEdit"
+).onclick =
+    async () => {
+
+        if(!editingFile){
+            return;
+        }
+
+
+        try{
+
+            await github(
+                githubPath(
+                    editingFile.path
+                ),
+                {
+                    method:"PUT",
+
+                    body:{
+
+                        message:
+                            "Update " +
+                            editingFile.path,
+
+                        content:
+                            textToBase64(
+                                document.getElementById(
+                                    "editor"
+                                ).value
+                            ),
+
+                        sha:
+                            editingFile.sha,
+
+                        branch:
+                            currentRepo.default_branch
+
+                    }
+
+                }
+            );
+
+
+            status(
+                "File berhasil diupdate.",
+                "ok"
+            );
+
+
+            closeEditor();
+
+            loadFiles();
+
+
+        }catch(error){
+
+            status(
+                error.message,
+                "bad"
+            );
+
+        }
+
+    };
+
+
+/* ================================
+   PREVIEW
+================================ */
+
+async function preview(file){
+
+    try{
+
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
+
+
+        const ext =
+            file.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+        const body =
+            document.getElementById(
+                "previewContent"
+            );
+
+
+        body.innerHTML = "";
+
+
+        document.getElementById(
+            "previewTitle"
+        ).textContent =
+            file.name;
+
+
+        if(
+            [
+                "jpg",
+                "jpeg",
+                "png",
+                "gif",
+                "webp"
+            ].includes(ext)
+        ){
+
+            const mime =
+                ext === "jpg" ||
+                ext === "jpeg"
+                    ? "image/jpeg"
+                    : "image/" + ext;
+
+
+            body.innerHTML =
+                `<img
+                    class="preview-img"
+                    src="data:${mime};base64,${data.content.replace(/\n/g,"")}"
+                >`;
+
+        }
+
+        else if(
+            [
+                "mp4",
+                "webm",
+                "ogg"
+            ].includes(ext)
+        ){
+
+            const mime =
+                ext === "mp4"
+                    ? "video/mp4"
+                    : "video/" + ext;
+
+
+            body.innerHTML =
+                `<video
+                    class="preview-video"
+                    controls
+                    src="data:${mime};base64,${data.content.replace(/\n/g,"")}"
+                ></video>`;
+
+        }
+
+        else{
+
+            const text =
+                data.encoding ===
+                "base64"
+                    ? base64ToText(
+                        data.content
+                    )
+                    : "Preview tidak tersedia.";
+
+
+            body.innerHTML =
+                `<pre style="
+                    white-space:pre-wrap;
+                    overflow:auto;
+                    max-height:70vh
+                ">${escapeHtml(
+                    text
+                )}</pre>`;
+
+        }
+
+
+        document.getElementById(
+            "previewModal"
+        ).classList.remove(
+            "hidden"
+        );
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+document.getElementById(
+    "closePreview"
+).onclick =
+    () => {
+
+        document.getElementById(
+            "previewModal"
+        ).classList.add(
+            "hidden"
+        );
+
+    };
+
+
+/* ================================
+   DOWNLOAD
+================================ */
+
+async function downloadFile(file){
+
+    try{
+
+        const data =
+            await github(
+                githubPath(
+                    file.path
+                )
+            );
+
+
+        const binary =
+            atob(
+                data.content.replace(
+                    /\n/g,
+                    ""
+                )
+            );
+
+
+        const bytes =
+            new Uint8Array(
+                binary.length
+            );
+
+
+        for(
+            let i = 0;
+            i < binary.length;
+            i++
+        ){
+
+            bytes[i] =
+                binary.charCodeAt(i);
+
+        }
+
+
+        const blob =
+            new Blob(
+                [bytes],
+                {
+                    type:
+                        "application/octet-stream"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const a =
+            document.createElement(
+                "a"
+            );
+
+
+        a.href = url;
+
+        a.download =
+            file.name;
+
+        a.click();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+    }catch(error){
+
+        status(
+            error.message,
+            "bad"
+        );
+
+    }
+
+}
+
+
+/* ================================
+   LOGOUT
+================================ */
+
+document.getElementById(
+    "logoutButton"
+).onclick =
+    () => {
+
+        sessionStorage.removeItem(
+            "yasam_github_token"
+        );
+
+        location.reload();
+
+    };
+
+
+/* ================================
+   HELPERS
+================================ */
+
+function textToBase64(
+    text
+){
+
+    const bytes =
+        new TextEncoder()
+            .encode(text);
+
+
+    return arrayBufferToBase64(
+        bytes.buffer
+    );
+
+}
+
+
+function base64ToText(
+    base64
+){
+
+    const binary =
+        atob(
+            base64.replace(
+                /\n/g,
+                ""
+            )
+        );
+
+
+    const bytes =
+        new Uint8Array(
+            binary.length
+        );
+
+
+    for(
+        let i = 0;
+        i < binary.length;
+        i++
+    ){
+
+        bytes[i] =
+            binary.charCodeAt(i);
+
+    }
+
+
+    return new TextDecoder()
+        .decode(bytes);
+
+}
+
+
+function arrayBufferToBase64(
+    buffer
+){
+
+    const bytes =
+        new Uint8Array(
+            buffer
+        );
+
+
+    let binary = "";
+
+    const chunk =
+        0x8000;
+
+
+    for(
+        let i = 0;
+        i < bytes.length;
+        i += chunk
+    ){
+
+        binary += String.fromCharCode(
+            ...bytes.subarray(
+                i,
+                Math.min(
+                    i + chunk,
+                    bytes.length
+                )
+            )
+        );
+
+    }
+
+
+    return btoa(binary);
+
+}
+
+
+function formatBytes(
+    bytes
+){
+
+    if(!bytes){
+        return "0 B";
+    }
+
+
+    const units =
+        [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+
+    const index =
+        Math.min(
+            units.length - 1,
+            Math.floor(
+                Math.log(bytes) /
+                Math.log(1024)
+            )
+        );
+
+
+    return (
+        bytes /
+        Math.pow(
+            1024,
+            index
+        )
+    ).toFixed(
+        index === 0
+            ? 0
+            : 1
+    ) +
+    " " +
+    units[index];
+
+}
+
+
+function fileIcon(
+    name
+){
+
+    const ext =
+        name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const icons = {
+
+        js:"📜",
+        json:"🧾",
+        html:"🌐",
+        css:"🎨",
+        py:"🐍",
+        php:"🐘",
+        md:"📝",
+        txt:"📄",
+
+        png:"🖼️",
+        jpg:"🖼️",
+        jpeg:"🖼️",
+        gif:"🖼️",
+        webp:"🖼️",
+
+        mp4:"🎬",
+        webm:"🎬",
+        ogg:"🎬",
+
+        zip:"📦",
+        rar:"📦",
+        apk:"📦",
+
+        pdf:"📕"
+
+    };
+
+
+    return icons[ext] || "📄";
+
+}
+
+
+function escapeHtml(
+    value
+){
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ================================
+   STATUS
+================================ */
+
+let statusTimer;
+
+
+function status(
+    message,
+    type=""
+){
+
+    clearTimeout(
+        statusTimer
+    );
+
+
+    statusBox.textContent =
+        message;
+
+
+    statusBox.className =
+        "status " +
+        type;
+
+
+    statusTimer =
+        setTimeout(
+            () => {
+
+                statusBox.classList.add(
+                    "hidden"
+                );
+
+            },
+            4000
+        );
+
+}
+
+</script>
+
+</body>
+</html>
