@@ -1623,6 +1623,1077 @@ document.querySelectorAll(".modal-bg").forEach(modal=>{
 
 /* ============ START ============ */
 restoreSession();
+<script>
+/* ============ CONFIG ============ */
+const API = "https://api.github.com";
+const SESSION_KEY = "yasamgit_v6_token";
+
+/* ============ STATE ============ */
+let token = "";
+let githubUser = null;
+let repositories = [];
+let selectedRepo = null;
+let files = [];
+let currentPath = "";
+let selectedFile = null;
+let statusTimer = null;
+let selectedPaths = new Set();
+
+/* ============ HELPERS ============ */
+function $(id){
+  return document.getElementById(id);
+}
+
+function esc(v){
+  return String(v ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function sleep(ms){
+  return new Promise(r => setTimeout(r,ms));
+}
+
+/*
+ * PENTING:
+ * Jangan encode seluruh path dengan encodeURIComponent().
+ *
+ * Salah:
+ * folder/file.js
+ * menjadi:
+ * folder%2Ffile.js
+ *
+ * GitHub Contents API membutuhkan setiap bagian path
+ * di-encode secara terpisah.
+ */
+function encodeGitPath(path){
+  return String(path || "")
+    .split("/")
+    .filter(Boolean)
+    .map(part => encodeURIComponent(part))
+    .join("/");
+}
+
+function normalizeGitPath(path){
+  return String(path || "")
+    .replace(/\\/g,"/")
+    .replace(/^\/+/,"")
+    .replace(/\/+/g,"/")
+    .replace(/\/+$/,"");
+}
+
+/* ============ STATUS ============ */
+function showStatus(message, ok=true){
+  const box = $("status");
+
+  clearTimeout(statusTimer);
+
+  box.textContent = message;
+  box.className = ok ? "ok" : "bad";
+  box.classList.remove("hidden");
+
+  statusTimer = setTimeout(() => {
+    box.classList.add("hidden");
+  },3500);
+}
+
+/* ============ GITHUB API ============ */
+async function github(endpoint, options={}){
+  if(!token){
+    throw new Error("Session GitHub tidak tersedia.");
+  }
+
+  const response = await fetch(API + endpoint,{
+    method: options.method || "GET",
+    cache: "no-store",
+    headers:{
+      "Authorization":"Bearer " + token,
+      "Accept":"application/vnd.github+json",
+      "X-GitHub-Api-Version":"2022-11-28",
+      "Content-Type":"application/json"
+    },
+    body: options.body !== undefined
+      ? JSON.stringify(options.body)
+      : undefined
+  });
+
+  let data = null;
+
+  try{
+    data = await response.json();
+  }catch{
+    data = null;
+  }
+
+  if(!response.ok){
+    const error = new Error(
+      data?.message || `GitHub API error ${response.status}`
+    );
+
+    error.status = response.status;
+    error.response = data;
+
+    if(response.status === 401){
+      error.message = "Token tidak valid atau sudah expired.";
+    }
+
+    throw error;
+  }
+
+  return data;
+}
+
+/* ============ LOGIN ============ */
+$("loginButton").onclick = login;
+
+$("tokenInput").addEventListener("keydown",e=>{
+  if(e.key === "Enter"){
+    login();
+  }
+});
+
+async function login(){
+  const button = $("loginButton");
+  const status = $("loginStatus");
+  const entered = $("tokenInput").value.trim();
+
+  if(!entered){
+    status.className = "login-status error";
+    status.textContent = "Masukkan GitHub token.";
+    return;
+  }
+
+  button.classList.add("loading");
+  button.innerHTML = '<span class="spin">&#9696;</span>';
+
+  status.className = "login-status";
+  status.textContent = "Memvalidasi token...";
+
+  const previous = token;
+  token = entered;
+
+  try{
+    githubUser = await github("/user");
+
+    sessionStorage.setItem(SESSION_KEY,entered);
+
+    status.className = "login-status success";
+    status.textContent = "Login berhasil.";
+
+    await sleep(200);
+
+    $("tokenInput").value = "";
+
+    showApp();
+
+  }catch(error){
+
+    token = previous || "";
+
+    sessionStorage.removeItem(SESSION_KEY);
+
+    status.className = "login-status error";
+    status.textContent = error.message;
+
+  }finally{
+
+    button.classList.remove("loading");
+    button.textContent = "Login with GitHub";
+
+  }
+}
+
+async function restoreSession(){
+  const saved = sessionStorage.getItem(SESSION_KEY);
+
+  if(!saved){
+    return;
+  }
+
+  token = saved;
+
+  try{
+    githubUser = await github("/user");
+    showApp();
+  }catch{
+    logout();
+  }
+}
+
+function showApp(){
+  $("loginPage").classList.add("hidden");
+  $("app").classList.remove("hidden");
+
+  $("currentUser").textContent =
+    "@" + (githubUser?.login || "github");
+
+  showRepos();
+}
+
+$("logoutButton").onclick = logout;
+
+function logout(){
+  sessionStorage.removeItem(SESSION_KEY);
+
+  token = "";
+  githubUser = null;
+  repositories = [];
+  selectedRepo = null;
+  files = [];
+
+  location.reload();
+}
+
+/* ============ REPOSITORIES ============ */
+async function loadRepositories(){
+
+  $("repoList").innerHTML =
+    `<div class="empty">Loading repositories...</div>`;
+
+  try{
+
+    repositories = await github(
+      "/user/repos?per_page=100&sort=updated&direction=desc"
+    );
+
+    renderRepositories();
+
+  }catch(error){
+
+    $("repoList").innerHTML =
+      `<div class="empty error">${esc(error.message)}</div>`;
+
+  }
+}
+
+function renderRepositories(){
+
+  const query =
+    $("repoSearch").value.trim().toLowerCase();
+
+  const list = repositories.filter(repo =>
+    repo.name.toLowerCase().includes(query)
+  );
+
+  $("repoCount").textContent = `(${list.length})`;
+
+  const box = $("repoList");
+
+  if(!list.length){
+
+    box.innerHTML =
+      `<div class="empty">Repository tidak ditemukan.</div>`;
+
+    return;
+  }
+
+  box.innerHTML = "";
+
+  list.forEach(repo => {
+
+    const div = document.createElement("div");
+
+    div.className = "repo";
+
+    div.innerHTML = `
+      <div class="repo-name">${esc(repo.name)}</div>
+
+      <div class="repo-desc">
+        ${esc(repo.description || "Tidak ada deskripsi.")}
+      </div>
+
+      <div class="repo-meta">
+        <span class="badge ${repo.private ? "priv" : "pub"}">
+          ${repo.private ? "Private" : "Public"}
+        </span>
+
+        <span>&#9733; ${repo.stargazers_count}</span>
+      </div>
+
+      <div class="repo-actions">
+        <button class="btn primary open-repo-btn">
+          Buka
+        </button>
+
+        <button class="btn danger del-repo-btn"
+          title="Hapus Repository">
+          &#128465;
+        </button>
+      </div>
+    `;
+
+    div.querySelector(".open-repo-btn").onclick =
+      () => openRepository(repo);
+
+    div.querySelector(".del-repo-btn").onclick =
+      () => openDeleteRepo(repo);
+
+    box.appendChild(div);
+  });
+}
+
+$("repoSearch").addEventListener("input",renderRepositories);
+
+function showRepos(){
+
+  $("repoPage").classList.remove("hidden");
+  $("filePage").classList.add("hidden");
+
+  selectedRepo = null;
+  currentPath = "";
+
+  loadRepositories();
+}
+
+/* ============ ADD REPO ============ */
+$("addRepoButton").onclick = () =>
+  $("repoModal").classList.remove("hidden");
+
+function closeRepoModal(){
+  $("repoModal").classList.add("hidden");
+}
+
+$("closeRepoModal").onclick = closeRepoModal;
+$("cancelRepo").onclick = closeRepoModal;
+
+$("createRepo").onclick = async e => {
+
+  const button = e.currentTarget;
+
+  const name =
+    $("newRepoName").value.trim();
+
+  const description =
+    $("newRepoDescription").value.trim();
+
+  const privateRepo =
+    $("newRepoPrivate").value === "true";
+
+  if(!name){
+    showStatus("Nama repository wajib diisi.",false);
+    return;
+  }
+
+  button.classList.add("loading");
+  button.innerHTML =
+    '<span class="spin">&#9696;</span>';
+
+  try{
+
+    await github("/user/repos",{
+      method:"POST",
+      body:{
+        name,
+        description,
+        private:privateRepo,
+        auto_init:true
+      }
+    });
+
+    $("newRepoName").value = "";
+    $("newRepoDescription").value = "";
+
+    closeRepoModal();
+
+    showStatus("Repository dibuat.",true);
+
+    await loadRepositories();
+
+  }catch(error){
+
+    showStatus(error.message,false);
+
+  }finally{
+
+    button.classList.remove("loading");
+    button.textContent = "Buat";
+
+  }
+};
+
+/* ============ DELETE REPO ============ */
+let repoToDelete = null;
+
+function openDeleteRepo(repo){
+
+  repoToDelete = repo;
+
+  $("deleteRepoName").textContent =
+    repo.name;
+
+  $("deleteRepoConfirm").value = "";
+
+  $("deleteRepoModal").classList.remove("hidden");
+}
+
+function closeDeleteRepo(){
+
+  repoToDelete = null;
+
+  $("deleteRepoModal").classList.add("hidden");
+}
+
+$("closeDeleteRepo").onclick = closeDeleteRepo;
+$("cancelDeleteRepo").onclick = closeDeleteRepo;
+
+$("confirmDeleteRepo").onclick = async e => {
+
+  if(!repoToDelete){
+    return;
+  }
+
+  if(
+    $("deleteRepoConfirm").value.trim() !==
+    repoToDelete.name
+  ){
+    showStatus("Nama repository tidak cocok.",false);
+    return;
+  }
+
+  const button = e.currentTarget;
+
+  button.classList.add("loading");
+  button.innerHTML =
+    '<span class="spin">&#9696;</span>';
+
+  try{
+
+    await github(
+      `/repos/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(repoToDelete.name)}`,
+      {
+        method:"DELETE"
+      }
+    );
+
+    showStatus(
+      `Repository ${repoToDelete.name} dihapus.`,
+      true
+    );
+
+    closeDeleteRepo();
+
+    await loadRepositories();
+
+  }catch(error){
+
+    showStatus(
+      error.message.includes("403") ||
+      /scope/i.test(error.message)
+        ? "Token tidak punya izin 'delete_repo'. Buat token baru dengan scope tersebut."
+        : error.message,
+      false
+    );
+
+  }finally{
+
+    button.classList.remove("loading");
+    button.textContent = "Hapus Repository";
+
+  }
+};
+
+/* ============ OPEN REPOSITORY ============ */
+async function openRepository(repo){
+
+  selectedRepo = repo;
+  currentPath = "";
+
+  selectedPaths.clear();
+
+  $("repoPage").classList.add("hidden");
+  $("filePage").classList.remove("hidden");
+
+  $("currentRepo").textContent = repo.name;
+
+  await loadFiles();
+}
+
+$("backButton").onclick = () =>
+  showRepos();
+
+/* ============ TREE ============ */
+async function loadFiles(opts={}){
+
+  const box = $("fileList");
+
+  box.innerHTML =
+    `<div class="empty">
+      <span class="spin" style="display:inline-block;">
+        &#9696;
+      </span>
+      &nbsp; Memuat...
+    </div>`;
+
+  if(opts.settle){
+    await sleep(600);
+  }
+
+  try{
+
+    const branch =
+      selectedRepo.default_branch;
+
+    const data = await github(
+      `/repos/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(selectedRepo.name)}/git/trees/${encodeURIComponent(branch)}?recursive=1&_=${Date.now()}`
+    );
+
+    files =
+      (data.tree || [])
+      .filter(item => item.type === "blob");
+
+    selectedPaths.clear();
+
+    updateBulkBar();
+    renderPath();
+    renderFiles();
+
+  }catch(error){
+
+    box.innerHTML =
+      `<div class="empty error">
+        ${esc(error.message)}
+      </div>`;
+
+  }
+}
+
+/* ============ PATH ============ */
+function renderPath(){
+
+  const bar = $("pathBar");
+
+  bar.innerHTML = "";
+
+  const root = document.createElement("button");
+
+  root.className = "path-button";
+  root.textContent = "root";
+
+  root.onclick = () => {
+
+    currentPath = "";
+
+    renderPath();
+    renderFiles();
+
+  };
+
+  bar.appendChild(root);
+
+  if(!currentPath){
+    return;
+  }
+
+  const parts =
+    currentPath.split("/").filter(Boolean);
+
+  let accumulated = "";
+
+  parts.forEach(part => {
+
+    accumulated +=
+      (accumulated ? "/" : "") + part;
+
+    const button =
+      document.createElement("button");
+
+    button.className = "path-button";
+    button.textContent = "/ " + part;
+
+    const target = accumulated;
+
+    button.onclick = () => {
+
+      currentPath = target;
+
+      renderPath();
+      renderFiles();
+
+    };
+
+    bar.appendChild(button);
+
+  });
+}
+
+/* ============ FILE ICON ============ */
+function iconFor(name,folder=false){
+
+  if(folder){
+    return "&#128193;";
+  }
+
+  const ext =
+    name.split(".").pop().toLowerCase();
+
+  if(
+    ["jpg","jpeg","png","gif","webp","bmp","svg"]
+    .includes(ext)
+  ){
+    return "&#128444;";
+  }
+
+  if(
+    ["mp4","webm","mov","mkv","avi"]
+    .includes(ext)
+  ){
+    return "&#127909;";
+  }
+
+  if(
+    ["mp3","wav","ogg"]
+    .includes(ext)
+  ){
+    return "&#127925;";
+  }
+
+  if(
+    ["zip","rar","7z","tar","gz"]
+    .includes(ext)
+  ){
+    return "&#128230;";
+  }
+
+  if(
+    ["js","ts","html","css","json","php","py","java","c","cpp","sh"]
+    .includes(ext)
+  ){
+    return "&#128187;";
+  }
+
+  return "&#128196;";
+}
+
+/* ============ SIZE ============ */
+function sizeText(size){
+
+  if(size < 1024){
+    return size + " B";
+  }
+
+  if(size < 1024 * 1024){
+    return (size / 1024).toFixed(1) + " KB";
+  }
+
+  return (size / 1024 / 1024).toFixed(1) + " MB";
+}
+
+/* ============ DIRECT CHILD FOLDERS ============ */
+function getFolders(){
+
+  const prefix =
+    currentPath ? currentPath + "/" : "";
+
+  const set = new Set();
+
+  files.forEach(file => {
+
+    if(!file.path.startsWith(prefix)){
+      return;
+    }
+
+    const rest =
+      file.path.slice(prefix.length);
+
+    const slash =
+      rest.indexOf("/");
+
+    if(slash !== -1){
+      set.add(rest.slice(0,slash));
+    }
+
+  });
+
+  return [...set].sort();
+}
+
+/* ============ BULK SELECT ============ */
+function updateBulkBar(){
+
+  const bar = $("bulkBar");
+
+  const n = selectedPaths.size;
+
+  bar.classList.toggle("show",n > 0);
+
+  $("bulkCount").textContent =
+    `${n} dipilih`;
+}
+
+$("bulkClear").onclick = () => {
+
+  selectedPaths.clear();
+
+  updateBulkBar();
+  renderFiles();
+
+};
+
+$("bulkMove").onclick = () => {
+
+  if(!selectedPaths.size){
+    return;
+  }
+
+  const list =
+    files.filter(f =>
+      selectedPaths.has(f.path)
+    );
+
+  openMove(list);
+};
+
+$("bulkDelete").onclick = async () => {
+
+  if(!selectedPaths.size){
+    return;
+  }
+
+  if(
+    !confirm(
+      `Hapus ${selectedPaths.size} file terpilih?`
+    )
+  ){
+    return;
+  }
+
+  const paths = [...selectedPaths];
+
+  showStatus(
+    `Menghapus ${paths.length} file...`,
+    true
+  );
+
+  let ok = 0;
+
+  for(const path of paths){
+
+    try{
+
+      const data =
+        await getFileData(path);
+
+      await github(
+        `/repos/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(selectedRepo.name)}/contents/${encodeGitPath(path)}`,
+        {
+          method:"DELETE",
+          body:{
+            message:`Delete ${path}`,
+            sha:data.sha,
+            branch:selectedRepo.default_branch
+          }
+        }
+      );
+
+      ok++;
+
+    }catch{}
+
+  }
+
+  selectedPaths.clear();
+
+  showStatus(
+    `${ok}/${paths.length} file berhasil dihapus.`,
+    true
+  );
+
+  await loadFiles({settle:true});
+};
+
+/* ============ RENDER FILES ============ */
+function renderFiles(){
+
+  const box = $("fileList");
+
+  const search =
+    $("fileSearch").value.trim().toLowerCase();
+
+  const prefix =
+    currentPath ? currentPath + "/" : "";
+
+  const folders =
+    getFolders();
+
+  const visibleFiles =
+    files.filter(file => {
+
+      if(!file.path.startsWith(prefix)){
+        return false;
+      }
+
+      const rest =
+        file.path.slice(prefix.length);
+
+      if(rest.includes("/")){
+        return false;
+      }
+
+      return rest
+        .toLowerCase()
+        .includes(search);
+
+    });
+
+  box.innerHTML = "";
+
+  folders
+    .filter(f =>
+      f.toLowerCase().includes(search)
+    )
+    .forEach(folder => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "file";
+
+      div.innerHTML = `
+        <div class="file-icon">&#128193;</div>
+
+        <div class="file-main">
+          <div class="file-name">${esc(folder)}</div>
+          <div class="file-meta">Folder</div>
+        </div>
+
+        <div class="file-actions">
+
+          <button class="btn open-folder-btn">
+            Buka
+          </button>
+
+          <button class="btn move-folder-btn"
+            title="Pindah Folder">
+            &#10145;
+          </button>
+
+          <button class="btn danger del-folder-btn"
+            title="Hapus Folder">
+            &#128465;
+          </button>
+
+        </div>
+      `;
+
+      div.querySelector(".open-folder-btn").onclick =
+        () => {
+
+          currentPath =
+            prefix + folder;
+
+          $("fileSearch").value = "";
+
+          renderPath();
+          renderFiles();
+
+        };
+
+      div.querySelector(".move-folder-btn").onclick =
+        () =>
+          openFolderMove(prefix + folder);
+
+      div.querySelector(".del-folder-btn").onclick =
+        () =>
+          openDeleteFolder(prefix + folder);
+
+      box.appendChild(div);
+
+    });
+
+  visibleFiles.forEach(file => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "file" +
+      (
+        selectedPaths.has(file.path)
+          ? " selected"
+          : ""
+      );
+
+    div.dataset.path = file.path;
+
+    const editable =
+      isTextFile(file.path);
+
+    div.innerHTML = `
+      <input type="checkbox"
+        class="file-check"
+        ${selectedPaths.has(file.path) ? "checked" : ""}>
+
+      <div class="file-icon">
+        ${iconFor(file.path)}
+      </div>
+
+      <div class="file-main">
+
+        <div class="file-name">
+          ${esc(file.path.split("/").pop())}
+        </div>
+
+        <div class="file-meta">
+          ${sizeText(file.size)}
+        </div>
+
+      </div>
+
+      <div class="file-actions">
+
+        <button class="btn preview-btn">
+          &#128065;
+        </button>
+
+        ${
+          editable
+            ? `<button class="btn edit-btn">&#9999;</button>`
+            : ""
+        }
+
+        <button class="btn rename-btn">
+          &#128221;
+        </button>
+
+        <button class="btn move-btn"
+          title="Pindah">
+          &#10145;
+        </button>
+
+        <button class="btn download-btn">
+          &#8595;
+        </button>
+
+        <button class="btn danger delete-btn">
+          &#128465;
+        </button>
+
+      </div>
+    `;
+
+    div.querySelector(".file-check").onchange =
+      e => {
+
+        if(e.target.checked){
+          selectedPaths.add(file.path);
+        }else{
+          selectedPaths.delete(file.path);
+        }
+
+        div.classList.toggle(
+          "selected",
+          e.target.checked
+        );
+
+        updateBulkBar();
+
+      };
+
+    div.querySelector(".file-main").onclick =
+      () => previewFile(file);
+
+    div.querySelector(".preview-btn").onclick =
+      () => previewFile(file);
+
+    const editButton =
+      div.querySelector(".edit-btn");
+
+    if(editButton){
+      editButton.onclick =
+        () => editFile(file);
+    }
+
+    div.querySelector(".rename-btn").onclick =
+      () => openRename(file);
+
+    div.querySelector(".move-btn").onclick =
+      () => openMove([file]);
+
+    div.querySelector(".download-btn").onclick =
+      () => downloadFile(file);
+
+    div.querySelector(".delete-btn").onclick =
+      () => deleteFile(file,div);
+
+    box.appendChild(div);
+
+  });
+
+  if(!box.children.length){
+
+    box.innerHTML =
+      `<div class="empty">
+        ${
+          search
+            ? "File tidak ditemukan."
+            : "Folder kosong."
+        }
+      </div>`;
+
+  }
+}
+
+/* ============ TEXT FILE ============ */
+function isTextFile(name){
+
+  const ext =
+    name.split(".").pop().toLowerCase();
+
+  return [
+    "txt","md","html","htm","css","js",
+    "mjs","cjs","ts","tsx","jsx","json",
+    "xml","yml","yaml","php","py","java",
+    "c","cpp","h","hpp","sh","bash",
+    "sql","env","ini","conf"
+  ].includes(ext);
+}
+
+/* ============ FILE DATA ============ */
+async function getFileData(path){
+
+  path = normalizeGitPath(path);
+
+  return await github(
+    `/repos/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(selectedRepo.name)}/contents/${encodeGitPath(path)}?ref=${encodeURIComponent(selectedRepo.default_branch)}`
+  );
+}
+
+/* ============ PREVIEW ============ */
+async function previewFile(file){
+
+  $("previewTitle").textContent =
+    file.path;
+
+  $("previewContent").innerHTML =
+    `<div class="empty">
+      Loading preview...
+    </div>`;
+
+  $("previewModal").classList.remove("hidden");
+
+  const rawUrl =
+    `https://raw.githubusercontent.com/${encodeURIComponent(githubUser.login)}/${encodeURIComponent(selectedRepo.name)}/${encodeURIComponent(selectedRepo.default_branch)}/` +
+    file.path
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/");
+
+  const ext =
+    file.path.split(".").pop().toLowerCase();
+
+  try{
+
+    if(
+      ["jpg","jpeg","png","gif","webp","bmp","svg"]
+      .includes(ext)
+    ){
+
+      $("previewContent").innerHTML =
+        `<img
+          class="previe
 </script>
 </body>
 </html>
